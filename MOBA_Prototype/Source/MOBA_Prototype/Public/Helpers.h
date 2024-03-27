@@ -13,5 +13,6 @@ UCLASS()
 class MOBA_PROTOTYPE_API UHelpers : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-	
+public:
+	static void LogScreenMessage(const FString& Text, float Duration= 2 );
 };
