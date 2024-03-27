@@ -12,6 +12,13 @@
 UCLASS()
 class MOBA_PROTOTYPE_API APlayerBattleController : public APlayerController
 {
+	UClass* ChampionClass;
 	GENERATED_BODY()
+	virtual void BeginPlay() override;
+	FTimerHandle handle;
+	UFUNCTION(BlueprintCallable)
+	void TryCreateChampionCharacter();
+	UFUNCTION(Server, Reliable)
+	void TestServer(UClass* currentChampionClass);
 	
 };
