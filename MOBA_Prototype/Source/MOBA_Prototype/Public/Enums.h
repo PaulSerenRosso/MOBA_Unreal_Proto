@@ -15,6 +15,12 @@ enum class ETeam : uint8
 	Neutral, Team1, Team2
 };
 
+UENUM(BlueprintType)
+enum class EUnitType : uint8
+{
+	MeleeBase, RangedBase
+};
+
 UCLASS()
 class MOBA_PROTOTYPE_API UEnums : public UBlueprintFunctionLibrary
 {

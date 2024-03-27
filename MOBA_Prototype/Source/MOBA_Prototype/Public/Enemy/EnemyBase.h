@@ -7,7 +7,7 @@
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API AEnemyBase : public AActor
+class MOBA_PROTOTYPE_API AEnemyBase : public APawn
 {
 	GENERATED_BODY()
 	
@@ -19,8 +19,26 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector TargetLocation;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* MeshComponent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UActorComponent* TargetActor;
+	
+
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintNativeEvent)
+	bool FindPointAroundTarget(FVector Target, float Radius);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void MoveCloseToTarget(FVector Target, float AcceptanceRadius);
 
 };

@@ -25,3 +25,13 @@ void AEnemyBase::Tick(float DeltaTime)
 
 }
 
+void AEnemyBase::MoveCloseToTarget_Implementation(FVector Target, float AcceptanceRadius)
+{
+}
+
+bool AEnemyBase::FindPointAroundTarget_Implementation(FVector Target, float Radius)
+{
+	// Will be implemented in the blueprint child classes
+	return false;
+}
+

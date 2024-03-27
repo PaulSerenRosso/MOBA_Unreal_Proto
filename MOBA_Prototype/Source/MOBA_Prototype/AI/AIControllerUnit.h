@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Enemy/EnemyBase.h"
-#include "MeleeEnemy.generated.h"
+#include "AIController.h"
+#include "AIControllerUnit.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MOBA_PROTOTYPE_API AMeleeEnemy : public AEnemyBase
+class MOBA_PROTOTYPE_API AAIControllerUnit : public AAIController
 {
 	GENERATED_BODY()
+	
 };
