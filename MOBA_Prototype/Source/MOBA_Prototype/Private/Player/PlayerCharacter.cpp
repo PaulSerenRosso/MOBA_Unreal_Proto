@@ -3,6 +3,7 @@
 
 #include "Player/PlayerCharacter.h"
 
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -22,13 +23,13 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-// Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void APlayerCharacter::Move(FVector2D Direction)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	AddMovementInput(FVector::RightVector, Direction.X);
+	AddMovementInput(FVector::ForwardVector, Direction.Y);
 }
+
+
 
