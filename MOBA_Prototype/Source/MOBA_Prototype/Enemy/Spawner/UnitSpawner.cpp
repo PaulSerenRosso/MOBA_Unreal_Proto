@@ -54,6 +54,7 @@ void AUnitSpawner::SpawnUnit(const FUnitToSpawn& UnitDetails)
 	}
 	
 	AEnemyBase* NewUnit = GetWorld()->SpawnActor<AEnemyBase>(UnitDetails.UnitClass.Get(), SpawnPoint->GetComponentLocation(), GetActorRotation());
+	NewUnit->SetTeam(Team);
 }
 
 // Called every frame

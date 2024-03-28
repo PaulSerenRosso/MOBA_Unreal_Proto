@@ -29,8 +29,8 @@ void APlayerBattleController::TryCreateChampionCharacter()
 void APlayerBattleController::TestServer_Implementation(UClass* currentChampionClass)
 {
 	UnPossess();
-	auto Character = GetWorld()->SpawnActor<APlayerCharacter>(currentChampionClass,FVector(UKismetMathLibrary::RandomFloat()*100+1000.000000,1810.000000,92.012604), FRotator::ZeroRotator );
-	Possess(Character);
+	auto Char = GetWorld()->SpawnActor<APlayerCharacter>(currentChampionClass,FVector(UKismetMathLibrary::RandomFloat()*100+1000.000000,1810.000000,92.012604), FRotator::ZeroRotator );
+	Possess(Char);
 }
 
 

@@ -18,7 +18,7 @@ public:
 	ATurret();
 
 protected:
-	TArray<IHitable *> HittableTargets;
+	TArray<IHitable*> HittableTargets;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	ETeam OwnTeam;

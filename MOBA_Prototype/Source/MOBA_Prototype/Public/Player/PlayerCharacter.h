@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums.h"
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
@@ -19,7 +20,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ETeam Team;
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

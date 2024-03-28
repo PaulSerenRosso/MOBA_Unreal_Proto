@@ -3,6 +3,8 @@
 
 #include "Turret.h"
 
+#include "GameModeBattle.h"
+
 // Sets default values
 ATurret::ATurret()
 {
@@ -15,7 +17,14 @@ ATurret::ATurret()
 void ATurret::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	auto GM = GetWorld()->GetAuthGameMode();
+	if (GM == nullptr) return;
+
+	auto GameModeBattle = Cast<AGameModeBattle>(GM);
+	if (GameModeBattle == nullptr) return;
+
+	GameModeBattle->AddTurret(this, OwnTeam);
 }
 
 // Called every frame

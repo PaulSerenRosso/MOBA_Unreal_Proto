@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums.h"
 #include "GameFramework/Actor.h"
 #include "EnemyBase.generated.h"
 
@@ -30,7 +31,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UActorComponent* TargetActor;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETeam Team;
+	
 
+	void SetTeam(ETeam NewTeam); 
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -40,5 +45,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void MoveCloseToTarget(FVector Target, float AcceptanceRadius);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ChangedTeam();
 
 };
