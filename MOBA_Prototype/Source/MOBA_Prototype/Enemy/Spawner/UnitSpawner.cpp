@@ -43,8 +43,9 @@ void AUnitSpawner::SpawnRandomUnit()
 	GetWorld()->GetTimerManager().SetTimer(WaveTimer, this, &AUnitSpawner::SpawnWave, WaveInterval, false);
 }
 
-void AUnitSpawner::SpawnUnit(const FUnitToSpawn& UnitDetails)
+void AUnitSpawner::SpawnUnit(const FUnitToSpawn& UnitDetails) const
 {
+	if (!Enabled) return;
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Spawning unit of type %d"), UnitDetails.UnitType));
 
 	if (UnitDetails.UnitClass.IsNull())

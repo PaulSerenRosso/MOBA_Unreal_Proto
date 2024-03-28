@@ -30,6 +30,11 @@ void AEnemyBase::Tick(float DeltaTime)
 
 }
 
+ETeam AEnemyBase::GetTeam()
+{
+	return Team;
+}
+
 void AEnemyBase::ChangedTeam_Implementation()
 {
 }

@@ -32,6 +32,9 @@ public:
 protected:
 	FTimerHandle WaveTimer;
 	FTimerHandle EachUnitTimer;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool Enabled = true;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float WaveInterval = 10.0f;
@@ -61,7 +64,7 @@ protected:
 
 	void SpawnWave();
 	void SpawnRandomUnit();
-	void SpawnUnit(const FUnitToSpawn& UnitDetails);
+	void SpawnUnit(const FUnitToSpawn& UnitDetails) const;
 
 public:	
 	// Called every frame

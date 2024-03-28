@@ -3,6 +3,7 @@
 
 #include "Turret.h"
 
+#include "AutoAimBullet.h"
 #include "GameModeBattle.h"
 
 // Sets default values
@@ -34,22 +35,65 @@ void ATurret::Tick(float DeltaTime)
 
 }
 
-void ATurret::AddHittableTarget(TSubclassOf<AActor> Target, const ETeam Team)
+void ATurret::AddHittableTarget(AActor* Target)
 {
 	IHitable* Hittable = Cast<IHitable>(Target);
 
 	if (Hittable == nullptr) return;
-	if (Team == ETeam::Neutral || Team == OwnTeam) return;
+
+	if (const ETeam Team = Hittable->GetTeam(); Team == ETeam::Neutral || Team == OwnTeam) return;
 	if (HittableTargets.Contains(Hittable)) return;
 	
 	HittableTargets.Add(Hittable);
+
+	targetCount = HittableTargets.Num();
+
+	if (targetCount > 0 && !IsAttacking)
+	{
+		Attack();
+	}
 }
 
-void ATurret::RemoveHittableTarget(TSubclassOf<AActor> Target)
+void ATurret::Attack()
+{
+	if (HittableTargets.Num() == 0)
+	{
+		IsAttacking = false;
+		return;
+	}
+	
+	IHitable* Target = HittableTargets[0];
+	if (Target == nullptr)
+	{
+		HittableTargets.RemoveAt(0);
+		Attack();
+		return;
+	}
+	
+	FHitData* HitData = new FHitData();
+	// const auto Bullet = SpawnBullet();
+	// Bullet->Init(Target, HitData);
+
+	GetWorldTimerManager().SetTimer(AttackTimer, this, &ATurret::Attack, AttackInterval);
+}
+
+void ATurret::RemoveHittableTarget(AActor* Target)
 {
 	IHitable* Hittable = Cast<IHitable>(Target);
 	if (Hittable == nullptr) return;
 
 	HittableTargets.Remove( Hittable );
+
+	targetCount = HittableTargets.Num();
+}
+
+AAutoAimBullet* ATurret::SpawnBullet_Implementation(FVector TargetLocation)
+{
+	if (BulletClass == nullptr) return nullptr;
+
+	const auto Bullet = GetWorld()->SpawnActor<AAutoAimBullet>(BulletClass, GetActorLocation(), FRotator::ZeroRotator);
+	if (Bullet == nullptr) return nullptr;
+
+	return Bullet;
 }
 

@@ -35,6 +35,7 @@ class MOBA_PROTOTYPE_API IHitable
 {
 	GENERATED_BODY()
 
+public:
 	virtual void OnHit(FHitData HitData);
 	virtual ETeam GetTeam();
 

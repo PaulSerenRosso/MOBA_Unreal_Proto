@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "Enums.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/Hitable.h"
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API AEnemyBase : public APawn
+class MOBA_PROTOTYPE_API AEnemyBase : public APawn, public IHitable
 {
 	GENERATED_BODY()
 	
@@ -48,5 +49,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void ChangedTeam();
+
+	ETeam GetTeam() override;
 
 };
