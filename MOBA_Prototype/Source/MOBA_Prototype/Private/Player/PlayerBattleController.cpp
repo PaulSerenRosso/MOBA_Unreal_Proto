@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerBattleController.h"
-
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "MobaPrototypeGameInstance.h"
@@ -33,9 +32,45 @@ void APlayerBattleController::SetupInputComponent()
 void APlayerBattleController::OnRep_Pawn()
 {
 	Super::OnRep_Pawn();
-	
 	UE_LOG(LogTemp, Warning, TEXT("TEST"));
 	UpdateInputMappingClient();
+}
+
+void APlayerBattleController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (!CheckOwningClient()) return;
+	if(BattleCharacter)
+	{	
+		if(GetDirectionFromCharacterPositionToMousePosition(MouseDirection))
+		{
+			BattleCharacter->Rotate(MouseDirection);
+		}
+		
+	}
+}
+
+bool APlayerBattleController::GetDirectionFromCharacterPositionToMousePosition(FVector& Direction)
+{
+		APawn* CurrentPawn = GetPawn();
+		if (!CurrentPawn)
+			return false;
+
+		FVector2D MousePosition;
+		if (!GetMousePosition(MousePosition.X, MousePosition.Y))
+			return false;
+	
+		FVector WorldLocation, WorldDirection;
+		if (!DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
+			return false;
+	FVector PawnLocation = CurrentPawn->GetActorLocation();
+	//UE_LOG(LogTemp, Warning, TEXT("Mouse Position X: %f  Y: %f PlayerPosition : X: %f  Y: %f "), WorldLocation.X, WorldLocation.Y,  PawnLocation.X, PawnLocation.Y);
+	
+		Direction.X = WorldLocation.X - PawnLocation.X;
+		Direction.Y = WorldLocation.Y - PawnLocation.Y;
+		Direction.Normalize();
+		return true;
+	
 }
 
 
@@ -68,11 +103,12 @@ void APlayerBattleController::TryCreateChampionCharacter()
 
 void APlayerBattleController::UpdateInputMappingClient()
 {
-	
+		if(!CheckOwningClient()) return;
 	BattleCharacter = Cast<APlayerCharacter>(GetPawn());
 	if(BattleCharacter == OldPawn) return;
+	if(OnPawnChanged.IsBound())
+	OnPawnChanged.Execute((BattleCharacter));
 	OldPawn = BattleCharacter;
-	if(!CheckOwningClient()) return;
 	if(BattleCharacter)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TESTaa"));

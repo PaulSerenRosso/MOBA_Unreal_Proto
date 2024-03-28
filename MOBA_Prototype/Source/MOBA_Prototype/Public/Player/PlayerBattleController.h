@@ -11,10 +11,17 @@
 /**
  * 
  */
+
+DECLARE_DELEGATE_OneParam(FOnPawnChanged, APawn*);
 UCLASS()
 class MOBA_PROTOTYPE_API APlayerBattleController : public APlayerController
 {
 	GENERATED_BODY()
+
+
+public:
+	bool GetDirectionFromCharacterPositionToMousePosition(FVector& Direction);
+	FOnPawnChanged OnPawnChanged;
 private:
 	UClass* ChampionClass;
 
@@ -26,7 +33,8 @@ private:
 	UInputAction* ShootInputAction;
 	APlayerCharacter* BattleCharacter;
 	APawn* OldPawn;
-
+	FVector MouseDirection;
+	
 protected:
 	virtual void UpdateInputMappingClient();
 	virtual void AddBattleInputMapping();
@@ -42,6 +50,8 @@ protected:
 	virtual void MoveInput(const FInputActionValue& ActionValue);
 	virtual void SetupInputComponent() override;
 	virtual void OnRep_Pawn() override;
-
+	virtual void Tick(float DeltaSeconds) override;
+	
+	
 	
 };

@@ -23,7 +23,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Move(FVector2D Direction); 
+	virtual void Move(FVector2D Direction);
 
-	//virtual FVector GetDirectionFromCharacterPositionToMousePosition()
+	virtual void Rotate(FVector Direction);
+
+	
 };

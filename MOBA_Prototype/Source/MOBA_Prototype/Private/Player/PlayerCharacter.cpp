@@ -31,5 +31,11 @@ void APlayerCharacter::Move(FVector2D Direction)
 	AddMovementInput(FVector::ForwardVector, Direction.Y);
 }
 
+void APlayerCharacter::Rotate(FVector Direction)
+{
+	SetActorRotation(Direction.Rotation());
+
+}
+
 
 
