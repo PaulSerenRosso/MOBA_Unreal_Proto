@@ -25,5 +25,5 @@ private:
 	virtual void BeginPlay() override;
 	APlayerBattleController* Controller;
 	UFUNCTION(BlueprintCallable)
-	void OnPawnChanged(APawn* pawn);
+	void OnPawnChangedClientOwner(APawn* pawn);
 };

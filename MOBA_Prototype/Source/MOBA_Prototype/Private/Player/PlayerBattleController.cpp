@@ -44,7 +44,7 @@ void APlayerBattleController::Tick(float DeltaSeconds)
 	{	
 		if(GetDirectionFromCharacterPositionToMousePosition(MouseDirection))
 		{
-			BattleCharacter->Rotate(MouseDirection);
+			BattleCharacter->RotateServer(MouseDirection);
 		}
 		
 	}
@@ -72,6 +72,12 @@ bool APlayerBattleController::GetDirectionFromCharacterPositionToMousePosition(F
 		return true;
 	
 }
+
+void APlayerBattleController::SetCameraToControllerServer_Implementation(AActor* Camera)
+{
+	SetViewTargetWithBlend(Camera);
+}
+
 
 
 void APlayerBattleController::SendInputShootServer_Implementation(const FInputActionValue& ActionValue)
@@ -103,19 +109,22 @@ void APlayerBattleController::TryCreateChampionCharacter()
 
 void APlayerBattleController::UpdateInputMappingClient()
 {
+	
 		if(!CheckOwningClient()) return;
 	BattleCharacter = Cast<APlayerCharacter>(GetPawn());
 	if(BattleCharacter == OldPawn) return;
-	if(OnPawnChanged.IsBound())
-	OnPawnChanged.Execute((BattleCharacter));
+	if(OnPawnChangedOwnerClient.IsBound())
+	OnPawnChangedOwnerClient.Execute((BattleCharacter));
 	OldPawn = BattleCharacter;
 	if(BattleCharacter)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TESTaa"));
 		AddBattleInputMapping();
+		SetShowMouseCursor(true);
 	}
 	else
 	{
+		SetShowMouseCursor(false);
 		RemoveBattleInputMapping();
 	}
 }
@@ -143,7 +152,6 @@ void APlayerBattleController::SpawnPlayerChampionCharacterServer_Implementation(
 	UnPossess();
 	auto CurrentCharacter = GetWorld()->SpawnActor<APlayerCharacter>(currentChampionClass,FVector(UKismetMathLibrary::RandomFloat()*100+1000.000000,1810.000000,92.012604), FRotator::ZeroRotator );
 	Possess(CurrentCharacter);
-
 	UpdateInputMappingClient();
 }
 

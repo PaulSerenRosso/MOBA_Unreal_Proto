@@ -3,11 +3,10 @@
 #include "Kismet/GameplayStatics.h"
 
 void ABattleCamera::Tick(float DeltaSeconds)
-{UE_LOG(LogTemp, Warning, TEXT("Falsefdsqfqdsf"));
+{
 	Super::Tick(DeltaSeconds);
 	if(Target)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TRUEfdsqfqdsf"));
 		SetActorLocation(Target->GetActorLocation()+directionFromTarget*distanceFromTarget);
 	}
 
@@ -17,18 +16,21 @@ void ABattleCamera::BeginPlay()
 {
 	Super::BeginPlay();
 	directionFromTarget.Normalize();
+	UE_LOG(LogTemp, Warning, TEXT("Begin play"));
 	Controller = Cast<APlayerBattleController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	if(Controller != nullptr)
 	{
-		Controller->SetViewTarget(this);
-		Controller->OnPawnChanged.BindUFunction(this, "OnPawnChanged");
+		UE_LOG(LogTemp, Warning, TEXT("Controller not null"));
+		Controller->OnPawnChangedOwnerClient.BindUFunction(this, "OnPawnChangedClientOwner");
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Controller null"));
 	}
 	
-	
-
 }
 
-void ABattleCamera::OnPawnChanged(APawn* pawn)
+void ABattleCamera::OnPawnChangedClientOwner(APawn* pawn)
 {
 	if(pawn == nullptr)
 	{
@@ -37,8 +39,10 @@ void ABattleCamera::OnPawnChanged(APawn* pawn)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("FALSE"));
+		UE_LOG(LogTemp, Warning, TEXT("FALSEEE %s controller %s controllerCharacter %s"), *pawn->GetName(), *Controller->GetName(), *Controller->GetPawn()->GetName());
+		
 		Target = pawn;
-		pawn->
+		Controller->SetCameraToControllerServer(this);
+		
 	}
 }

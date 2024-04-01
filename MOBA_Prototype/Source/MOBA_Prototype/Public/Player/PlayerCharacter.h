@@ -18,14 +18,17 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Move(FVector2D Direction);
 
-	virtual void Rotate(FVector Direction);
+	UPROPERTY(Replicated)
+	FRotator CurrentRotation;
+	UFUNCTION(Server, Unreliable)
+	virtual void RotateServer(FVector Direction);
 
 	
 };

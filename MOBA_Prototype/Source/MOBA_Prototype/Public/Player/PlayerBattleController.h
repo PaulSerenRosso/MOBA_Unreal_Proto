@@ -21,7 +21,9 @@ class MOBA_PROTOTYPE_API APlayerBattleController : public APlayerController
 
 public:
 	bool GetDirectionFromCharacterPositionToMousePosition(FVector& Direction);
-	FOnPawnChanged OnPawnChanged;
+	FOnPawnChanged OnPawnChangedOwnerClient;
+	UFUNCTION(Server, Reliable)
+	void SetCameraToControllerServer(AActor* Camera);
 private:
 	UClass* ChampionClass;
 
