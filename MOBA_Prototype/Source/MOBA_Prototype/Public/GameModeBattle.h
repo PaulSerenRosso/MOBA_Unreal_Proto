@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Enums.h"
 #include "GameFramework/GameModeBase.h"
-#include "MOBA_Prototype/Building/Turret.h"
+#include "Building/Turret.h"
 #include "GameModeBattle.generated.h"
 
 /**

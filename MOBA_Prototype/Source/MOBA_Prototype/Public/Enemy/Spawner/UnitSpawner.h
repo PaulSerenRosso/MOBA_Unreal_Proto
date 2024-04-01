@@ -14,7 +14,7 @@ struct FUnitToSpawn
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	EUnitType UnitType;
+	ECustomUnitType UnitType;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSoftClassPtr<AEnemyBase> UnitClass;

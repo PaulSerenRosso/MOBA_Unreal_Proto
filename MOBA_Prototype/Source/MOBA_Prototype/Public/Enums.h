@@ -16,7 +16,7 @@ enum class ETeam : uint8
 };
 
 UENUM(BlueprintType)
-enum class EUnitType : uint8
+enum class ECustomUnitType : uint8
 {
 	MeleeBase, RangedBase
 };

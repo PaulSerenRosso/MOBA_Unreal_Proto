@@ -41,6 +41,9 @@ protected:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UClass* BulletClass;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool Activated;
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -75,7 +75,7 @@ void APlayerBattleController::UpdateInputMappingClient()
 	if(!CheckOwningClient()) return;
 	if(BattleCharacter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TESTaa"));
+		//UE_LOG(LogTemp, Warning, TEXT("TESTaa"));
 		AddBattleInputMapping();
 	}
 	else

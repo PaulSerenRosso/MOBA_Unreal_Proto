@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Turret.h"
+#include "Building/Turret.h"
 
 #include "AutoAimBullet.h"
 #include "GameModeBattle.h"
@@ -56,6 +56,7 @@ void ATurret::AddHittableTarget(AActor* Target)
 
 void ATurret::Attack()
 {
+	//if (Activated) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Attacking")));
 	if (HittableTargets.Num() == 0)
 	{
 		IsAttacking = false;
@@ -71,9 +72,14 @@ void ATurret::Attack()
 	}
 	
 	FHitData* HitData = new FHitData();
-	// const auto Bullet = SpawnBullet();
-	// Bullet->Init(Target, HitData);
+	//if (Activated) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Turret %s is attacking %s"), *GetName(), *Cast<AActor>(Target)->GetName()));
 
+	if (Activated)
+	{
+		const auto Bullet = SpawnBullet(GetActorLocation() + FVector(0, 0, 500));
+		Bullet->Init(Target, HitData);
+	}
+	
 	GetWorldTimerManager().SetTimer(AttackTimer, this, &ATurret::Attack, AttackInterval);
 }
 

@@ -23,6 +23,8 @@ protected:
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	void Ray(float Distance);
 
 public:	
 	// Called every frame
