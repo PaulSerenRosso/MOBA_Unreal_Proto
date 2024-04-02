@@ -22,7 +22,7 @@ void ATurret::BeginPlay()
 	auto GM = GetWorld()->GetAuthGameMode();
 	if (GM == nullptr) return;
 
-	auto GameModeBattle = Cast<AGameModeBattle>(GM);
+	const auto GameModeBattle = Cast<AGameModeBattle>(GM);
 	if (GameModeBattle == nullptr) return;
 
 	GameModeBattle->AddTurret(this, OwnTeam);
