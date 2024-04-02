@@ -32,7 +32,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	UInputAction* MoveInputAction;
 	UPROPERTY(EditAnywhere)
-	UInputAction* ShootInputAction;
+	UInputAction* AttackInputAction;
 	APlayerCharacter* BattleCharacter;
 	APawn* OldPawn;
 	FVector MouseDirection;
@@ -48,7 +48,7 @@ protected:
 	void SpawnPlayerChampionCharacterServer(UClass* currentChampionClass);
 	virtual void BeginPlay() override;
 	UFUNCTION(Server, Reliable)
-	virtual void SendInputShootServer(const FInputActionValue& ActionValue);
+	virtual void SendInputAttackServer(const FInputActionValue& ActionValue);
 	virtual void MoveInput(const FInputActionValue& ActionValue);
 	virtual void SetupInputComponent() override;
 	virtual void OnRep_Pawn() override;

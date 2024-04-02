@@ -33,7 +33,12 @@ void APlayerCharacter::Move(FVector2D Direction)
 {
 	AddMovementInput(FVector::RightVector, Direction.X);
 	AddMovementInput(FVector::ForwardVector, Direction.Y);
-	GetCharacterMovement()->MovementMode = 
+	
+}
+
+FVector APlayerCharacter::GetPlayerPosition()
+{
+	return GetActorLocation();
 }
 
 

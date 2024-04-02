@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/PlayerPawnComponentHandlable.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter
+class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter, public IPlayerPawnComponentHandlable
 {
 	GENERATED_BODY()
 
@@ -29,6 +30,6 @@ public:
 	FRotator CurrentRotation;
 	UFUNCTION(Server, Unreliable)
 	virtual void RotateServer(FVector Direction);
-
+	virtual FVector GetPlayerPosition() override;
 	
 };

@@ -26,7 +26,7 @@ void APlayerBattleController::SetupInputComponent()
 	Super::SetupInputComponent();
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::MoveInput);
-	EnhancedInputComponent->BindAction(ShootInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::SendInputShootServer);
+	EnhancedInputComponent->BindAction(AttackInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::SendInputAttackServer);
 }
 
 void APlayerBattleController::OnRep_Pawn()
@@ -80,7 +80,7 @@ void APlayerBattleController::SetCameraToControllerServer_Implementation(AActor*
 
 
 
-void APlayerBattleController::SendInputShootServer_Implementation(const FInputActionValue& ActionValue)
+void APlayerBattleController::SendInputAttackServer_Implementation(const FInputActionValue& ActionValue)
 {
 	
 }
