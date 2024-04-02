@@ -3,6 +3,9 @@
 
 #include "Player/PlayerCharacter.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -23,13 +26,30 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	SetActorRotation(CurrentRotation);
 }
 
 void APlayerCharacter::Move(FVector2D Direction)
 {
 	AddMovementInput(FVector::RightVector, Direction.X);
 	AddMovementInput(FVector::ForwardVector, Direction.Y);
+	
+}
+
+FVector APlayerCharacter::GetPlayerPosition()
+{
+	return GetActorLocation();
 }
 
 
+void APlayerCharacter::RotateServer_Implementation(FVector Direction)
+{
+	CurrentRotation = Direction.Rotation();
+}
+
+
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APlayerCharacter, CurrentRotation);
+}
 

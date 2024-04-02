@@ -11,10 +11,19 @@
 /**
  * 
  */
+
+DECLARE_DELEGATE_OneParam(FOnPawnChanged, APawn*);
 UCLASS()
 class MOBA_PROTOTYPE_API APlayerBattleController : public APlayerController
 {
 	GENERATED_BODY()
+
+
+public:
+	bool GetDirectionFromCharacterPositionToMousePosition(FVector& Direction);
+	FOnPawnChanged OnPawnChangedOwnerClient;
+	UFUNCTION(Server, Reliable)
+	void SetCameraToControllerServer(AActor* Camera);
 private:
 	UClass* ChampionClass;
 
@@ -23,10 +32,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	UInputAction* MoveInputAction;
 	UPROPERTY(EditAnywhere)
-	UInputAction* ShootInputAction;
+	UInputAction* AttackInputAction;
 	APlayerCharacter* BattleCharacter;
 	APawn* OldPawn;
-
+	FVector MouseDirection;
+	
 protected:
 	virtual void UpdateInputMappingClient();
 	virtual void AddBattleInputMapping();
@@ -38,10 +48,12 @@ protected:
 	void SpawnPlayerChampionCharacterServer(UClass* currentChampionClass);
 	virtual void BeginPlay() override;
 	UFUNCTION(Server, Reliable)
-	virtual void SendInputShootServer(const FInputActionValue& ActionValue);
+	virtual void SendInputAttackServer(const FInputActionValue& ActionValue);
 	virtual void MoveInput(const FInputActionValue& ActionValue);
 	virtual void SetupInputComponent() override;
 	virtual void OnRep_Pawn() override;
-
+	virtual void Tick(float DeltaSeconds) override;
+	
+	
 	
 };

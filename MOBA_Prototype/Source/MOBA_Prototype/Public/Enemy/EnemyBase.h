@@ -52,4 +52,6 @@ public:
 
 	ETeam GetTeam() override;
 
+	virtual void OnHit(FHitData HitData) override;
+
 };

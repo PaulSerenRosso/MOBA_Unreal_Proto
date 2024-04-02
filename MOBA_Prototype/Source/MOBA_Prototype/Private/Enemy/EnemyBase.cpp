@@ -35,6 +35,10 @@ ETeam AEnemyBase::GetTeam()
 	return Team;
 }
 
+void AEnemyBase::OnHit(FHitData HitData)
+{
+}
+
 void AEnemyBase::ChangedTeam_Implementation()
 {
 }

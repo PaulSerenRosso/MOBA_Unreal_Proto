@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "Enums.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/PlayerPawnComponentHandlable.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter
+class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter, public IPlayerPawnComponentHandlable
 {
 	GENERATED_BODY()
 
@@ -27,7 +28,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Move(FVector2D Direction); 
+	virtual void Move(FVector2D Direction);
 
-	//virtual FVector GetDirectionFromCharacterPositionToMousePosition()
+	UPROPERTY(Replicated)
+	FRotator CurrentRotation;
+	UFUNCTION(Server, Unreliable)
+	virtual void RotateServer(FVector Direction);
+	virtual FVector GetPlayerPosition() override;
+	
 };
