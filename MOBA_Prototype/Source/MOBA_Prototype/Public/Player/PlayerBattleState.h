@@ -17,5 +17,5 @@ class MOBA_PROTOTYPE_API APlayerBattleState : public APlayerState
 public:
 	UPROPERTY(Replicated)
 	ETeam Team;
-	virtual void BeginPlay() override;
+	void SetTeam();
 };

@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Player/PlayerCharacter.h"
-#include "Components/CapsuleComponent.h"
+#include "GameModeBattle.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerBattleState.h"
 
@@ -23,15 +23,21 @@ void APlayerCharacter::BeginPlay()
 		PlayerAttackables.Add(InteractableComponent);
 		InteractableComponent->SetUp(this);
 	}
+	CurrentHealth = GetMaxHealth();
+	OnHitClient();
 }
-
-
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	SetActorRotation(CurrentRotation);
+}
+
+void APlayerCharacter::DieServer()
+{
+	IsDie = true;
+	
 }
 
 void APlayerCharacter::Move(FVector2D Direction)
@@ -54,22 +60,80 @@ FRotator APlayerCharacter::GetPlayerRotation()
 ETeam APlayerCharacter::GetPlayerTeam()
 {
 	
-	return PlayerBattleState->Team;
+	return Team;
 }
 
 void APlayerCharacter::OnHit(FHitData HitData)
 {
-	
+	if(IsDie) return;
+	CurrentHealth -= HitData.Damage;
+	UE_LOG(LogTemp, Warning, TEXT("hit by %s the target is %s"), *HitData.HitBy->GetName(), *GetName());
+	if(CurrentHealth < 0)
+	{
+		DieServer();
+	}
+	OnHitClient();
 }
 
 ETeam APlayerCharacter::GetTeam()
 {
-	return PlayerBattleState->Team;
+	return Team;
 }
 
 void APlayerCharacter::OnSpawnedServer()
 {
-		PlayerBattleState = Cast<APlayerBattleState>(GetPlayerState());
+	PlayerBattleState = Cast<APlayerBattleState>(GetPlayerState());
+	if (PlayerBattleState == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerBattleState is nullptr"));
+		return;
+	}
+	PlayerBattleState->SetTeam();
+	auto GameMode = Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode());
+	if (GameMode == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameMode is nullptr"));
+		return;
+	}
+	if (!GameMode->PlayerTeamSpawners.Contains(PlayerBattleState->Team))
+	{
+		if(PlayerBattleState->Team == ETeam::Neutral)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Invalid TeamIndex: is neutral "));
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Invalid TeamIndex: "));
+		return;
+	}
+	AActor* TeamSpawner = GameMode->PlayerTeamSpawners[PlayerBattleState->Team];
+	if (TeamSpawner == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team is nullptr"));
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team : %s"), *TeamSpawner->GetName());
+	Team = PlayerBattleState->Team;
+	SetActorLocation(TeamSpawner->GetActorLocation());
+		
+}
+
+int APlayerCharacter::GetHealth()
+{
+	return CurrentHealth;
+}
+
+int APlayerCharacter::GetMaxHealth()
+{
+	return ChampionData->MaxHealth;
+}
+
+float APlayerCharacter::GetPercentageHealth()
+{
+	return static_cast<float>(GetHealth())/static_cast<float>(GetMaxHealth());
+}
+
+void APlayerCharacter::OnHitClient_Implementation()
+{
+	Execute_CallbackUpdateHealth(this);
 }
 
 
@@ -99,5 +163,7 @@ void APlayerCharacter::RotateServer_Implementation(FVector Direction)
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlayerCharacter, CurrentRotation);
+	DOREPLIFETIME(APlayerCharacter, CurrentHealth);
+	DOREPLIFETIME(APlayerCharacter, Team);
 }
 

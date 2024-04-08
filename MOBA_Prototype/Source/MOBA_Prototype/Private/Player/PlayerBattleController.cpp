@@ -132,7 +132,7 @@ void APlayerBattleController::UpdateInputMappingClient()
 	OldPawn = BattleCharacter;
 	if(BattleCharacter)
 	{
-		BattleCharacter->OnSpawnedServer();
+		
 		//UE_LOG(LogTemp, Warning, TEXT("TESTaa"));
 		AddBattleInputMapping();
 		OnActivateBattleCharacterClientOwner();
@@ -140,7 +140,6 @@ void APlayerBattleController::UpdateInputMappingClient()
 	}
 	else
 	{
-		BattleCharacter->OnSpawnedServer();
 		RemoveBattleInputMapping();
 		OnDeactivateBattleCharacterClientOwner();
 	}
@@ -170,6 +169,7 @@ void APlayerBattleController::SpawnPlayerChampionCharacterServer_Implementation(
 {
 	UnPossess();
 	auto CurrentCharacter = GetWorld()->SpawnActor<APlayerCharacter>(currentChampionClass,FVector(UKismetMathLibrary::RandomFloat()*100+1000.000000,1810.000000,92.012604), FRotator::ZeroRotator );
+	
 	Possess(CurrentCharacter);
 	UpdateInputMappingClient();
 	BattleCharacter->OnSpawnedServer();

@@ -6,9 +6,10 @@
 #include "Net/UnrealNetwork.h"
 
 
-void APlayerBattleState::BeginPlay()
+
+
+void APlayerBattleState::SetTeam()
 {
-	Super::BeginPlay();
 	if(HasAuthority())
 	{
 		if(GetPlayerController()->IsLocalController())
@@ -23,6 +24,7 @@ void APlayerBattleState::BeginPlay()
 		}
 	}
 }
+
 void APlayerBattleState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlayerBattleState, Team);

@@ -4,6 +4,13 @@
 #include "GameModeBattle.h"
 
 
+void AGameModeBattle::AddPlayerTeamSpawner(APlayerTeamSpawner* PlayerSpawner, ETeam Team)
+{
+	if(PlayerSpawner == nullptr) return;
+	
+	PlayerTeamSpawners.Add(Team, PlayerSpawner);
+}
+
 void AGameModeBattle::AddTurret(ATurret* Turret, const ETeam Team)
 {
 	if(Turret == nullptr) return;
