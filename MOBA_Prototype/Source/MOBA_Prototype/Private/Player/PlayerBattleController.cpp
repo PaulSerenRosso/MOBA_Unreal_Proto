@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "MobaPrototypeGameInstance.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/PlayerCharacter.h"
 
@@ -13,6 +14,19 @@ void APlayerBattleController::BeginPlay()
 {
 	Super::BeginPlay();
 	TryCreateChampionCharacter();
+}
+
+void APlayerBattleController::AttackInput(const FInputActionValue& ActionValue)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Je test l'attack"));
+	
+	BattleCharacter->AttackServer();
+}
+
+void APlayerBattleController::CancelAttackInput(const FInputActionValue& ActionValue)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Je test le cancel"));
+	BattleCharacter->CancelAttackServer();
 }
 
 void APlayerBattleController::MoveInput(const FInputActionValue& ActionValue)
@@ -26,13 +40,15 @@ void APlayerBattleController::SetupInputComponent()
 	Super::SetupInputComponent();
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::MoveInput);
-	EnhancedInputComponent->BindAction(AttackInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::SendInputAttackServer);
+	EnhancedInputComponent->BindAction(AttackInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::AttackInput);
+	EnhancedInputComponent->BindAction(CancelAttackInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::CancelAttackInput);
+	cpt = 0;
 }
 
 void APlayerBattleController::OnRep_Pawn()
 {
 	Super::OnRep_Pawn();
-	UE_LOG(LogTemp, Warning, TEXT("TEST"));
+//	UE_LOG(LogTemp, Warning, TEXT("TEST"));
 	UpdateInputMappingClient();
 }
 
@@ -49,6 +65,7 @@ void APlayerBattleController::Tick(float DeltaSeconds)
 		
 	}
 }
+
 
 bool APlayerBattleController::GetDirectionFromCharacterPositionToMousePosition(FVector& Direction)
 {
@@ -80,10 +97,7 @@ void APlayerBattleController::SetCameraToControllerServer_Implementation(AActor*
 
 
 
-void APlayerBattleController::SendInputAttackServer_Implementation(const FInputActionValue& ActionValue)
-{
-	
-}
+
 
 bool APlayerBattleController::CheckOwningClient()
 {
@@ -109,24 +123,29 @@ void APlayerBattleController::TryCreateChampionCharacter()
 
 void APlayerBattleController::UpdateInputMappingClient()
 {
-	
-		if(!CheckOwningClient()) return;
 	BattleCharacter = Cast<APlayerCharacter>(GetPawn());
+	if(CheckOwningClient())
+	{	
 	if(BattleCharacter == OldPawn) return;
 	if(OnPawnChangedOwnerClient.IsBound())
 	OnPawnChangedOwnerClient.Execute((BattleCharacter));
 	OldPawn = BattleCharacter;
 	if(BattleCharacter)
 	{
+		BattleCharacter->OnSpawnedServer();
 		//UE_LOG(LogTemp, Warning, TEXT("TESTaa"));
 		AddBattleInputMapping();
-		SetShowMouseCursor(true);
+		OnActivateBattleCharacterClientOwner();
+	
 	}
 	else
 	{
-		SetShowMouseCursor(false);
+		BattleCharacter->OnSpawnedServer();
 		RemoveBattleInputMapping();
+		OnDeactivateBattleCharacterClientOwner();
 	}
+			
+		};
 }
 
 void APlayerBattleController::AddBattleInputMapping()
@@ -153,6 +172,7 @@ void APlayerBattleController::SpawnPlayerChampionCharacterServer_Implementation(
 	auto CurrentCharacter = GetWorld()->SpawnActor<APlayerCharacter>(currentChampionClass,FVector(UKismetMathLibrary::RandomFloat()*100+1000.000000,1810.000000,92.012604), FRotator::ZeroRotator );
 	Possess(CurrentCharacter);
 	UpdateInputMappingClient();
+	BattleCharacter->OnSpawnedServer();
 }
 
 

@@ -16,3 +16,23 @@ void UHelpers::LogScreenMessage(const FString& Text, float Duration )
 					 );
 	}
 }
+
+ETeam UHelpers::GetEnemyTeam(ETeam Team)
+{
+	switch (Team)
+	{
+	case ETeam::Team1:
+		{
+			return ETeam::Team2;
+		}
+	case ETeam::Team2:
+		{
+			return ETeam::Team1;
+		}
+	case ETeam::Neutral:
+		{
+			return ETeam::Neutral;
+		}
+	}
+	return ETeam::Neutral;
+}

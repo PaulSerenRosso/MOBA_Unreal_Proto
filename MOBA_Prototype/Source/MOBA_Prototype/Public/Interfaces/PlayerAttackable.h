@@ -22,7 +22,9 @@ class MOBA_PROTOTYPE_API IPlayerAttackable
 	GENERATED_BODY()
 public:
 	virtual void SetUp(IPlayerPawnComponentHandlable* PlayerHandler) = 0;
-	virtual void OnAttack() = 0;
+	
+	virtual void OnAttackServer() = 0;
+	virtual void OnCancelAttackServer() = 0;
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 };

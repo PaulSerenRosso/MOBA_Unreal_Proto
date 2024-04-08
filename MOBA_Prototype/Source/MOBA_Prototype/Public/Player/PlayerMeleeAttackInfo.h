@@ -4,15 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "ChampionData.generated.h"
+#include "PlayerMeleeAttackInfo.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MOBA_PROTOTYPE_API UChampionData : public UDataAsset
+class MOBA_PROTOTYPE_API UPlayerMeleeAttackInfo : public UPrimaryDataAsset
 {
-public:
-
 	GENERATED_BODY()
+	
 };
