@@ -13,10 +13,14 @@ struct FHitData
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	FHitData();
+	
+	FHitData(const float Damage, AActor* HitBy);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float Damage;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AActor* HitBy;
 };
 

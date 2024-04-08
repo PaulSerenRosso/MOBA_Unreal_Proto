@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Enums.h"
+#include "Interfaces/PlayerJoin.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "Interfaces/Hitable.h"
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API AEnemyBase : public APawn, public IHitable
+class MOBA_PROTOTYPE_API AEnemyBase : public ACharacter, public IHitable, public IPlayerJoin
 {
 	GENERATED_BODY()
 	
@@ -24,17 +26,38 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector TargetLocation;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int AttackRange = 100;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Damage = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackCooldown = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool CanAttack = true;
+
+	FTimerHandle AttackTimerHandle;
+
+	void ResetAttackCooldown();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* MeshComponent;
+	USkeletalMeshComponent* MeshComponent;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	UActorComponent* TargetActor;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	ETeam Team;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Meta = (ExposeOnSpawn = true))
+	int CurrentHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int MaxHealth;
 
 	void SetTeam(ETeam NewTeam); 
 	
@@ -48,10 +71,26 @@ public:
 	void MoveCloseToTarget(FVector Target, float AcceptanceRadius);
 
 	UFUNCTION(BlueprintNativeEvent)
+	void UpdateHealth();
+
+	UFUNCTION(BlueprintCallable)
+	float GetPercentHealth();
+
+	UFUNCTION(BlueprintNativeEvent)
 	void ChangedTeam();
+
+	UFUNCTION(BlueprintCallable)
+	void TryAttack(AActor* Target);
 
 	ETeam GetTeam() override;
 
 	virtual void OnHit(FHitData HitData) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void PlayerJoin_Implementation();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 };

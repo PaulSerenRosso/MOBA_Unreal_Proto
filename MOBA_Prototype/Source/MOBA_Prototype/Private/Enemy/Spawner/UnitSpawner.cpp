@@ -53,8 +53,9 @@ void AUnitSpawner::SpawnUnit(const FUnitToSpawn& UnitDetails) const
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Unit class is null")));
 		return;
 	}
-	
+	const auto UnitScale = FVector(0.6f, 0.6f, 0.6f);
 	AEnemyBase* NewUnit = GetWorld()->SpawnActor<AEnemyBase>(UnitDetails.UnitClass.Get(), SpawnPoint->GetComponentLocation(), GetActorRotation());
+	NewUnit->SetActorScale3D(UnitScale);
 	NewUnit->SetTeam(Team);
 }
 

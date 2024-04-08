@@ -72,6 +72,7 @@ void ATurret::Attack()
 	}
 	
 	FHitData* HitData = new FHitData();
+	HitData->Damage = 20;
 	//if (Activated) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Turret %s is attacking %s"), *GetName(), *Cast<AActor>(Target)->GetName()));
 
 	if (Activated)

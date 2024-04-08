@@ -17,6 +17,11 @@ void AEnemyBase::BeginPlay()
 	
 }
 
+void AEnemyBase::ResetAttackCooldown()
+{
+	CanAttack = true;
+}
+
 void AEnemyBase::SetTeam(const ETeam NewTeam)
 {
 	Team = NewTeam;
@@ -27,7 +32,35 @@ void AEnemyBase::SetTeam(const ETeam NewTeam)
 void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
+void AEnemyBase::UpdateHealth_Implementation()
+{
+}
+
+float AEnemyBase::GetPercentHealth()
+{
+	if (MaxHealth == 0) return 0.0f;
+	
+	return static_cast<float>(CurrentHealth) / static_cast<float>(MaxHealth);
+}
+
+void AEnemyBase::TryAttack(AActor* Target)
+{
+	const auto Dist = FVector::Dist(Target->GetActorLocation(), GetActorLocation());
+	if (Dist > AttackRange) return;
+
+	const auto Hittable = Cast<IHitable>(Target);
+	if (Hittable == nullptr) return;
+
+	if (!CanAttack) return;
+	if (Hittable->GetTeam() == Team) return;
+	if (Hittable == this) return;
+
+	Hittable->OnHit(FHitData( Damage, this ));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Attacked")));
+	CanAttack = false;
+	GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &AEnemyBase::ResetAttackCooldown, AttackCooldown, false);
 }
 
 ETeam AEnemyBase::GetTeam()
@@ -37,6 +70,22 @@ ETeam AEnemyBase::GetTeam()
 
 void AEnemyBase::OnHit(FHitData HitData)
 {
+	CurrentHealth -= HitData.Damage;
+	UpdateHealth();
+	if (CurrentHealth <= 0)
+	{
+		Destroy();
+	}
+}
+
+void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void AEnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
 void AEnemyBase::ChangedTeam_Implementation()
