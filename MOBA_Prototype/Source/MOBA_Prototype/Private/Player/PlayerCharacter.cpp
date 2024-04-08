@@ -121,7 +121,7 @@ void APlayerCharacter::OnSpawnedServer()
 		UE_LOG(LogTemp, Warning, TEXT("Invalid TeamIndex: "));
 		return;
 	}
-	AActor* TeamSpawner = GameState->PlayerTeamSpawners[PlayerBattleState->Team];
+	TeamSpawner = GameState->PlayerTeamSpawners[PlayerBattleState->Team];
 	if (TeamSpawner == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team is nullptr"));

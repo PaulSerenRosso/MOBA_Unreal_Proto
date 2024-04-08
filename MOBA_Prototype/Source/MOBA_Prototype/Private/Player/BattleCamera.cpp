@@ -2,6 +2,7 @@
 #include "Player/BattleCamera.h"
 
 #include "GameModeBattle.h"
+#include "GameStateBattle.h"
 #include "Kismet/GameplayStatics.h"
 
 void ABattleCamera::Tick(float DeltaSeconds)
@@ -36,7 +37,7 @@ void ABattleCamera::OnPawnChangedClientOwner(APawn* pawn)
 	if(pawn == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TRUE"));
-		Target = Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode())
+		Target = Cast<AGameStateBattle>(GetWorld()->GetGameState())
 		->TeamTurrets[UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPlayerState<APlayerBattleState>()->Team];
 		Controller->SetCameraToControllerServer(this);
 	}
