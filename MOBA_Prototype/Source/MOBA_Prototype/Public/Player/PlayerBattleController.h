@@ -33,27 +33,34 @@ private:
 	UInputAction* MoveInputAction;
 	UPROPERTY(EditAnywhere)
 	UInputAction* AttackInputAction;
+	UPROPERTY(EditAnywhere)
+	UInputAction* CancelAttackInputAction;
 	APlayerCharacter* BattleCharacter;
 	APawn* OldPawn;
 	FVector MouseDirection;
+	
 	
 protected:
 	virtual void UpdateInputMappingClient();
 	virtual void AddBattleInputMapping();
 	virtual void RemoveBattleInputMapping();
+	UFUNCTION(BlueprintCallable)
 	bool CheckOwningClient();
 	UFUNCTION(BlueprintCallable)
 	void TryCreateChampionCharacter();
 	UFUNCTION(Server, Reliable)
 	void SpawnPlayerChampionCharacterServer(UClass* currentChampionClass);
 	virtual void BeginPlay() override;
-	UFUNCTION(Server, Reliable)
-	virtual void SendInputAttackServer(const FInputActionValue& ActionValue);
+	virtual void AttackInput(const FInputActionValue& ActionValue);
+	virtual void CancelAttackInput(const FInputActionValue& ActionValue);
 	virtual void MoveInput(const FInputActionValue& ActionValue);
 	virtual void SetupInputComponent() override;
 	virtual void OnRep_Pawn() override;
 	virtual void Tick(float DeltaSeconds) override;
-	
-	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnActivateBattleCharacterClientOwner();
+	UFUNCTION(BlueprintImplementableEvent)
+void OnDeactivateBattleCharacterClientOwner();
+	int cpt = 0;
 	
 };

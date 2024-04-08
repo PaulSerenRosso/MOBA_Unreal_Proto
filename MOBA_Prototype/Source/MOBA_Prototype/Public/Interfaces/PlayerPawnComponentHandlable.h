@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums.h"
 #include "UObject/Interface.h"
 #include "PlayerPawnComponentHandlable.generated.h"
 
@@ -21,6 +22,9 @@ class MOBA_PROTOTYPE_API IPlayerPawnComponentHandlable
 	GENERATED_BODY()
 public:
 	virtual FVector GetPlayerPosition() = 0;
+	virtual FRotator GetPlayerRotation() = 0;
+	virtual ETeam GetPlayerTeam() = 0;
+	
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 };
