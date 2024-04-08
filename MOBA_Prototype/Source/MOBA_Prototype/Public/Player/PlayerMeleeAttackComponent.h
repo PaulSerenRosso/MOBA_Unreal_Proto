@@ -8,7 +8,7 @@
 #include "PlayerMeleeAttackComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), Blueprintable, meta=(BlueprintSpawnableComponent) )
 class MOBA_PROTOTYPE_API UPlayerMeleeAttackComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -23,8 +23,11 @@ protected:
 
 public:	
 	// Called every frame
+	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void SetUp(IPlayerPawnComponentHandlable* PlayerHandler);
+	UFUNCTION(Server, Reliable)
 	virtual void OnAttack();
+	
 		
 };

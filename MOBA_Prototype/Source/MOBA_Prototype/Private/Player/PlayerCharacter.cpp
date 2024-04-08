@@ -1,10 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Player/PlayerCharacter.h"
-
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/PlayerBattleState.h"
 
 
 // Sets default values
@@ -19,8 +17,15 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	for (auto Component : GetComponentsByInterface(UPlayerAttackable::StaticClass()))
+	{
+		IPlayerAttackable* InteractableComponent = Cast<IPlayerAttackable>(Component);
+		PlayerAttackables.Add(InteractableComponent);
+		InteractableComponent->SetUp(this);
+	}
 }
+
+
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
@@ -33,12 +38,55 @@ void APlayerCharacter::Move(FVector2D Direction)
 {
 	AddMovementInput(FVector::RightVector, Direction.X);
 	AddMovementInput(FVector::ForwardVector, Direction.Y);
-	
 }
+
 
 FVector APlayerCharacter::GetPlayerPosition()
 {
 	return GetActorLocation();
+}
+
+FRotator APlayerCharacter::GetPlayerRotation()
+{
+	return GetActorRotation();
+}
+
+ETeam APlayerCharacter::GetPlayerTeam()
+{
+	
+	return PlayerBattleState->Team;
+}
+
+void APlayerCharacter::OnHit(FHitData HitData)
+{
+	
+}
+
+ETeam APlayerCharacter::GetTeam()
+{
+	return PlayerBattleState->Team;
+}
+
+void APlayerCharacter::OnSpawnedServer()
+{
+		PlayerBattleState = Cast<APlayerBattleState>(GetPlayerState());
+}
+
+
+void APlayerCharacter::CancelAttackServer_Implementation()
+{
+	for (auto Attackable : PlayerAttackables)
+	{
+		Attackable->OnCancelAttackServer();
+	}
+}
+
+void APlayerCharacter::AttackServer_Implementation()
+{
+	for (auto Attackable : PlayerAttackables)
+	{
+		Attackable->OnAttackServer();
+	}
 }
 
 

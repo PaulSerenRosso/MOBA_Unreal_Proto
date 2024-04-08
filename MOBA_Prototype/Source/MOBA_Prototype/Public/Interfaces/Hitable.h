@@ -12,7 +12,7 @@ USTRUCT(Blueprintable)
 struct FHitData
 {
 	GENERATED_BODY()
-
+	
 	UPROPERTY()
 	float Damage;
 
