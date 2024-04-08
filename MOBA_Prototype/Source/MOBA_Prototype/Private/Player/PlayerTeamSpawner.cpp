@@ -4,6 +4,7 @@
 #include "Player/PlayerTeamSpawner.h"
 
 #include "GameModeBattle.h"
+#include "GameStateBattle.h"
 
 // Sets default values
 APlayerTeamSpawner::APlayerTeamSpawner()
@@ -17,12 +18,12 @@ APlayerTeamSpawner::APlayerTeamSpawner()
 void APlayerTeamSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	auto GM = GetWorld()->GetAuthGameMode();
-	if (GM == nullptr) return;
-	const auto GameModeBattle = Cast<AGameModeBattle>(GM);
-	if (GameModeBattle == nullptr) return;
+	auto GameState = GetWorld()->GetGameState();
+	if (GameState == nullptr) return;
+	const auto GameStateBattle = Cast<AGameStateBattle>(GameState);
+	if (GameStateBattle == nullptr) return;
 	UE_LOG(LogTemp, Warning, TEXT("Add spawner to gamemode"));
-	GameModeBattle->AddPlayerTeamSpawner(this, Team);
+	GameStateBattle->AddPlayerTeamSpawner(this, Team);
 	
 }
 

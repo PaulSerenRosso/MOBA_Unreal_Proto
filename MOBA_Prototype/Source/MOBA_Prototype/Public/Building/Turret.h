@@ -8,10 +8,11 @@
 #include "GameFramework/Actor.h"
 #include "Interfaces/Healthable.h"
 #include "Interfaces/Hitable.h"
+#include "Interfaces/PlayerJoin.h"
 #include "Turret.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API ATurret : public AActor, public IHitable, public IHealthable
+class MOBA_PROTOTYPE_API ATurret : public AActor, public IHitable, public IHealthable, public IPlayerJoin
 {
 	GENERATED_BODY()
 	
@@ -28,7 +29,7 @@ protected:
 	
 	TArray<IHitable*> HittableTargets;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
 	ETeam OwnTeam;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -45,7 +46,19 @@ protected:
 
 	void Attack();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateTeamMats();
+
 public:
+	UFUNCTION(BlueprintCallable)
+	void DoMyThing();
+
+	
+	void OnPlayerJoin(APlayerController* PlayerController);
+
+
+
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UClass* BulletClass;
 
@@ -69,7 +82,6 @@ public:
 	virtual void OnHit(FHitData HitData) override;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	
 	virtual int GetHealth() override;
 	virtual int GetMaxHealth() override;

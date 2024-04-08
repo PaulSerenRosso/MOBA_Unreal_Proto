@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Player/PlayerCharacter.h"
 #include "GameModeBattle.h"
+#include "GameStateBattle.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerBattleState.h"
 
@@ -89,13 +90,13 @@ void APlayerCharacter::OnSpawnedServer()
 		return;
 	}
 	PlayerBattleState->SetTeam();
-	auto GameMode = Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode());
-	if (GameMode == nullptr)
+	auto GameState = Cast<AGameStateBattle>(GetWorld()->GetGameState());
+	if (GameState == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GameMode is nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("AGameStateBattle is nullptr"));
 		return;
 	}
-	if (!GameMode->PlayerTeamSpawners.Contains(PlayerBattleState->Team))
+	if (!GameState->PlayerTeamSpawners.Contains(PlayerBattleState->Team))
 	{
 		if(PlayerBattleState->Team == ETeam::Neutral)
 		{
@@ -104,7 +105,7 @@ void APlayerCharacter::OnSpawnedServer()
 		UE_LOG(LogTemp, Warning, TEXT("Invalid TeamIndex: "));
 		return;
 	}
-	AActor* TeamSpawner = GameMode->PlayerTeamSpawners[PlayerBattleState->Team];
+	AActor* TeamSpawner = GameState->PlayerTeamSpawners[PlayerBattleState->Team];
 	if (TeamSpawner == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team is nullptr"));

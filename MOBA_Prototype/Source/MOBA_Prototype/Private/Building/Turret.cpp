@@ -5,6 +5,10 @@
 
 #include "AutoAimBullet.h"
 #include "GameModeBattle.h"
+#include "GameStateBattle.h"
+#include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
+#include "Player/PlayerBattleController.h"
 
 // Sets default values
 ATurret::ATurret()
@@ -20,13 +24,13 @@ void ATurret::BeginPlay()
 	Super::BeginPlay();
 	CurrentHealth = MaxHealth;
 
-	auto GM = GetWorld()->GetAuthGameMode();
-	if (GM == nullptr) return;
+	auto GameState = GetWorld()->GetGameState();
+	if (GameState == nullptr) return;
 
-	const auto GameModeBattle = Cast<AGameModeBattle>(GM);
-	if (GameModeBattle == nullptr) return;
+	const auto GameStateBattle = Cast<AGameStateBattle>(GameState);
+	if (GameStateBattle == nullptr) return;
 
-	GameModeBattle->AddTurret(this, OwnTeam);
+	GameStateBattle->AddTurret(this, OwnTeam);
 	Execute_CallbackUpdateHealth(this);
 }
 
@@ -88,6 +92,12 @@ void ATurret::Attack()
 	GetWorldTimerManager().SetTimer(AttackTimer, this, &ATurret::Attack, AttackInterval);
 }
 
+void ATurret::DoMyThing()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Do My Thing")));
+	UpdateTeamMats();
+}
+
 void ATurret::RemoveHittableTarget(AActor* Target)
 {
 	IHitable* Hittable = Cast<IHitable>(Target);
@@ -117,6 +127,8 @@ void ATurret::OnHit(FHitData HitData)
 void ATurret::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ATurret, CurrentHealth);
+	DOREPLIFETIME(ATurret, OwnTeam);
 }
 
 int ATurret::GetHealth()

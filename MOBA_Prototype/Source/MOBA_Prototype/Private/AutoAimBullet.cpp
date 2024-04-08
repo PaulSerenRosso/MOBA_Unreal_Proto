@@ -49,11 +49,11 @@ void AAutoAimBullet::Ray(float Distance)
 
 	if (HitTarget->GetTeam() == HitData->InstigatorTeam) return;
 	
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("BULLET : Hit a HitTarget")));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("BULLET : Hit a HitTarget")));
 	HitTarget->OnHit(*HitData);
 
-	auto Str = "Hit target: " + HitActor->GetName();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
+	// auto Str = "Hit target: " + HitActor->GetName();
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
 	Destroy();
 }
 
@@ -83,7 +83,7 @@ void AAutoAimBullet::Init(IHitable* Trget, FHitData* Hit, const float Spd)
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Bullet Init")));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Bullet Init")));
 	
 	Target = Trget;
 	HitData = Hit;
