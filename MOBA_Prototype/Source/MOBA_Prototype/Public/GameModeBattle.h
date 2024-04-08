@@ -13,4 +13,7 @@ UCLASS()
 class MOBA_PROTOTYPE_API AGameModeBattle : public AGameModeBase
 {
 	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	float RespawnTime= 5;
 };
