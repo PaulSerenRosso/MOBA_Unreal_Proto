@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Player/BattleCamera.h"
+
+#include "GameModeBattle.h"
 #include "Kismet/GameplayStatics.h"
 
 void ABattleCamera::Tick(float DeltaSeconds)
@@ -9,7 +11,6 @@ void ABattleCamera::Tick(float DeltaSeconds)
 	{
 		SetActorLocation(Target->GetActorLocation()+directionFromTarget*distanceFromTarget);
 	}
-
 }
 
 void ABattleCamera::BeginPlay()
@@ -26,8 +27,8 @@ void ABattleCamera::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Controller null"));
+		
 	}
-	
 }
 
 void ABattleCamera::OnPawnChangedClientOwner(APawn* pawn)
@@ -35,7 +36,9 @@ void ABattleCamera::OnPawnChangedClientOwner(APawn* pawn)
 	if(pawn == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TRUE"));
-		Target = nullptr;
+		Target = Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode())
+		->TeamTurrets[UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPlayerState<APlayerBattleState>()->Team];
+		Controller->SetCameraToControllerServer(this);
 	}
 	else
 	{

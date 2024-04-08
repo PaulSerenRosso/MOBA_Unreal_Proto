@@ -20,18 +20,18 @@ void APlayerBattleController::AttackInput(const FInputActionValue& ActionValue)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Je test l'attack"));
 	
-	BattleCharacter->AttackServer();
+	CurrentBattleCharacter->AttackServer();
 }
 
 void APlayerBattleController::CancelAttackInput(const FInputActionValue& ActionValue)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Je test le cancel"));
-	BattleCharacter->CancelAttackServer();
+	CurrentBattleCharacter->CancelAttackServer();
 }
 
 void APlayerBattleController::MoveInput(const FInputActionValue& ActionValue)
 {
-	BattleCharacter->Move(ActionValue.Get<FVector2D>());
+	CurrentBattleCharacter->Move(ActionValue.Get<FVector2D>());
 	
 }
 
@@ -42,7 +42,6 @@ void APlayerBattleController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::MoveInput);
 	EnhancedInputComponent->BindAction(AttackInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::AttackInput);
 	EnhancedInputComponent->BindAction(CancelAttackInputAction, ETriggerEvent::Triggered, this, &APlayerBattleController::CancelAttackInput);
-	cpt = 0;
 }
 
 void APlayerBattleController::OnRep_Pawn()
@@ -56,15 +55,15 @@ void APlayerBattleController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	if (!CheckOwningClient()) return;
-	if(BattleCharacter)
+	if(CurrentBattleCharacter)
 	{	
 		if(GetDirectionFromCharacterPositionToMousePosition(MouseDirection))
 		{
-			BattleCharacter->RotateServer(MouseDirection);
+			CurrentBattleCharacter->RotateServer(MouseDirection);
 		}
-		
 	}
 }
+
 
 
 bool APlayerBattleController::GetDirectionFromCharacterPositionToMousePosition(FVector& Direction)
@@ -123,23 +122,24 @@ void APlayerBattleController::TryCreateChampionCharacter()
 
 void APlayerBattleController::UpdateInputMappingClient()
 {
-	BattleCharacter = Cast<APlayerCharacter>(GetPawn());
+	CurrentBattleCharacter = Cast<APlayerCharacter>(GetPawn());
 	if(CheckOwningClient())
 	{	
-	if(BattleCharacter == OldPawn) return;
+	if(CurrentBattleCharacter == OldPawn) return;
 	if(OnPawnChangedOwnerClient.IsBound())
-	OnPawnChangedOwnerClient.Execute((BattleCharacter));
-	OldPawn = BattleCharacter;
-	if(BattleCharacter)
+	OnPawnChangedOwnerClient.Execute((CurrentBattleCharacter));
+	OldPawn = CurrentBattleCharacter;
+	if(CurrentBattleCharacter)
 	{
 		
-		//UE_LOG(LogTemp, Warning, TEXT("TESTaa"));
+		UE_LOG(LogTemp, Warning, TEXT("AddInput"));
 		AddBattleInputMapping();
 		OnActivateBattleCharacterClientOwner();
 	
 	}
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("RemoveBattle"));
 		RemoveBattleInputMapping();
 		OnDeactivateBattleCharacterClientOwner();
 	}
@@ -165,16 +165,30 @@ void APlayerBattleController::RemoveBattleInputMapping()
 	}
 }
 
+
+
 void APlayerBattleController::SpawnPlayerChampionCharacterServer_Implementation(UClass* currentChampionClass)
 {
 	UnPossess();
-	auto CurrentCharacter = GetWorld()->SpawnActor<APlayerCharacter>(currentChampionClass,FVector(UKismetMathLibrary::RandomFloat()*100+1000.000000,1810.000000,92.012604), FRotator::ZeroRotator );
-	
-	Possess(CurrentCharacter);
+	BattleCharacter = GetWorld()->SpawnActor<APlayerCharacter>(currentChampionClass,FVector(UKismetMathLibrary::RandomFloat()*100+1000.000000,1810.000000,92.012604), FRotator::ZeroRotator );
+	BattleCharacter->OnDieServer.BindUFunction(this, "UnPossessBattleCharacterServer");
+	BattleCharacter->OnRespawnServer.BindUFunction(this, "PossessBattleCharacterServer");
+	Possess(BattleCharacter);
 	UpdateInputMappingClient();
-	BattleCharacter->OnSpawnedServer();
+	CurrentBattleCharacter->OnSpawnedServer();
 }
 
+void APlayerBattleController::UnPossessBattleCharacterServer()
+{
+	UnPossess();
+	UpdateInputMappingClient();
+}
+
+void APlayerBattleController::PossessBattleCharacterServer()
+{
+	Possess(BattleCharacter);
+	UpdateInputMappingClient();
+}
 
 
 

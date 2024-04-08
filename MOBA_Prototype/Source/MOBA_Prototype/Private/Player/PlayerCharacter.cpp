@@ -24,7 +24,7 @@ void APlayerCharacter::BeginPlay()
 		InteractableComponent->SetUp(this);
 	}
 	CurrentHealth = GetMaxHealth();
-	OnHitClient();
+	OnHealthChangedClient();
 }
 
 // Called every frame
@@ -37,8 +37,24 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::DieServer()
 {
 	IsDie = true;
-	
+	CurrentHealth = GetMaxHealth();
+	OnHealthChangedClient();
+	GetWorldTimerManager().SetTimer(RespawnTimer,this,
+		&APlayerCharacter::RespawnPlayerServer,
+		Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode())->RespawnTime, false);
+	if(OnDieServer.IsBound())
+		OnDieServer.Execute();
 }
+
+void APlayerCharacter::RespawnPlayerServer()
+{
+	IsDie = false;
+	SetActorLocation(TeamSpawner->GetActorLocation());
+	if(OnRespawnServer.IsBound())
+		OnRespawnServer.Execute();
+}
+
+
 
 void APlayerCharacter::Move(FVector2D Direction)
 {
@@ -72,7 +88,7 @@ void APlayerCharacter::OnHit(FHitData HitData)
 	{
 		DieServer();
 	}
-	OnHitClient();
+	OnHealthChangedClient();
 }
 
 ETeam APlayerCharacter::GetTeam()
@@ -104,7 +120,7 @@ void APlayerCharacter::OnSpawnedServer()
 		UE_LOG(LogTemp, Warning, TEXT("Invalid TeamIndex: "));
 		return;
 	}
-	AActor* TeamSpawner = GameMode->PlayerTeamSpawners[PlayerBattleState->Team];
+	TeamSpawner = GameMode->PlayerTeamSpawners[PlayerBattleState->Team];
 	if (TeamSpawner == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team is nullptr"));
@@ -131,7 +147,7 @@ float APlayerCharacter::GetPercentageHealth()
 	return static_cast<float>(GetHealth())/static_cast<float>(GetMaxHealth());
 }
 
-void APlayerCharacter::OnHitClient_Implementation()
+void APlayerCharacter::OnHealthChangedClient_Implementation()
 {
 	Execute_CallbackUpdateHealth(this);
 }

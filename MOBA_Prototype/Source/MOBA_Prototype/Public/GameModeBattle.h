@@ -18,13 +18,15 @@ class MOBA_PROTOTYPE_API AGameModeBattle : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere)
+	float RespawnTime= 5;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TeamMaterials")
 	TMap<ETeam, UMaterial*> TeamMaterials;
 	TMap<ETeam, ATurret*> TeamTurrets;
 	TMap<ETeam, APlayerTeamSpawner*> PlayerTeamSpawners;
 	void AddPlayerTeamSpawner(APlayerTeamSpawner* PlayerSpawner, ETeam Team);
 	void AddTurret(ATurret* Turret, ETeam Team);
-
+	
 	UFUNCTION(BlueprintCallable)
 	UMaterial* GetTeamMaterial(ETeam Team);
 	

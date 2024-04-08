@@ -12,7 +12,7 @@
 #include "Interfaces/PlayerAttackable.h"
 #include "Interfaces/PlayerPawnComponentHandlable.h"
 #include "PlayerCharacter.generated.h"
-
+DECLARE_DELEGATE(FOnDie);
 UCLASS()
 class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter, public IPlayerPawnComponentHandlable, public IHitable, public IHealthable
 {
@@ -21,6 +21,8 @@ class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter, public IPlayerPaw
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
+	FOnDie OnDieServer;
+	FOnDie OnRespawnServer;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -33,11 +35,14 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(Replicated)
 	ETeam Team;
+	AActor* TeamSpawner;
+	FTimerHandle RespawnTimer;
 	UPROPERTY(Replicated)
 	bool IsDie = false;
 	UPROPERTY(Replicated)
 	int CurrentHealth;
 	virtual void DieServer();
+	virtual void RespawnPlayerServer();
 public:
 	virtual void Move(FVector2D Direction);
 	UPROPERTY(Replicated)
@@ -58,7 +63,8 @@ public:
 	virtual int GetMaxHealth() override;
 	virtual float GetPercentageHealth() override;
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void OnHitClient();
+	virtual void OnHealthChangedClient();
+	
 
 
 	

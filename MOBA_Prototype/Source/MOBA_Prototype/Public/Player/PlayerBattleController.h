@@ -26,7 +26,7 @@ public:
 	void SetCameraToControllerServer(AActor* Camera);
 private:
 	UClass* ChampionClass;
-
+	APlayerCharacter* BattleCharacter;
 	UPROPERTY(EditAnywhere)
 	UInputMappingContext* BattleInputMappingContext;
 	UPROPERTY(EditAnywhere)
@@ -35,7 +35,7 @@ private:
 	UInputAction* AttackInputAction;
 	UPROPERTY(EditAnywhere)
 	UInputAction* CancelAttackInputAction;
-	APlayerCharacter* BattleCharacter;
+	APlayerCharacter* CurrentBattleCharacter;
 	APawn* OldPawn;
 	FVector MouseDirection;
 	
@@ -61,6 +61,9 @@ protected:
 	void OnActivateBattleCharacterClientOwner();
 	UFUNCTION(BlueprintImplementableEvent)
 void OnDeactivateBattleCharacterClientOwner();
-	int cpt = 0;
+	UFUNCTION(BlueprintCallable)
+	void UnPossessBattleCharacterServer();
+	UFUNCTION(BlueprintCallable)
+	void PossessBattleCharacterServer();
 	
 };
