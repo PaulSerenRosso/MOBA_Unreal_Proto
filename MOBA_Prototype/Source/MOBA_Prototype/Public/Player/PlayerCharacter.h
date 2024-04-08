@@ -7,13 +7,14 @@
 #include "Enums.h"
 #include "PlayerBattleState.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/Healthable.h"
 #include "Interfaces/Hitable.h"
 #include "Interfaces/PlayerAttackable.h"
 #include "Interfaces/PlayerPawnComponentHandlable.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter, public IPlayerPawnComponentHandlable, public IHitable
+class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter, public IPlayerPawnComponentHandlable, public IHitable, public IHealthable
 {
 	GENERATED_BODY()
 
@@ -30,6 +31,13 @@ protected:
 	APlayerBattleState* PlayerBattleState;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(Replicated)
+	ETeam Team;
+	UPROPERTY(Replicated)
+	bool IsDie = false;
+	UPROPERTY(Replicated)
+	int CurrentHealth;
+	virtual void DieServer();
 public:
 	virtual void Move(FVector2D Direction);
 	UPROPERTY(Replicated)
@@ -46,6 +54,12 @@ public:
 	virtual void OnHit(FHitData HitData) override;
 	virtual ETeam GetTeam() override;
 	virtual void OnSpawnedServer();
+	virtual int GetHealth() override;
+	virtual int GetMaxHealth() override;
+	virtual float GetPercentageHealth() override;
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void OnHitClient();
+
 
 	
 };

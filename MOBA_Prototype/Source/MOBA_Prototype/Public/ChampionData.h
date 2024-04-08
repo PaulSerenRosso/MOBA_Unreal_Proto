@@ -13,6 +13,7 @@ UCLASS()
 class MOBA_PROTOTYPE_API UChampionData : public UDataAsset
 {
 public:
-
+	UPROPERTY(EditAnywhere)
+	int MaxHealth = 300;
 	GENERATED_BODY()
 };

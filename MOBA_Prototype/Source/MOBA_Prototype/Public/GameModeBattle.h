@@ -6,6 +6,7 @@
 #include "Enums.h"
 #include "GameFramework/GameModeBase.h"
 #include "Building/Turret.h"
+#include "Player/PlayerTeamSpawner.h"
 #include "GameModeBattle.generated.h"
 
 /**
@@ -20,7 +21,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TeamMaterials")
 	TMap<ETeam, UMaterial*> TeamMaterials;
 	TMap<ETeam, ATurret*> TeamTurrets;
-	
+	TMap<ETeam, APlayerTeamSpawner*> PlayerTeamSpawners;
+	void AddPlayerTeamSpawner(APlayerTeamSpawner* PlayerSpawner, ETeam Team);
 	void AddTurret(ATurret* Turret, ETeam Team);
 
 	UFUNCTION(BlueprintCallable)

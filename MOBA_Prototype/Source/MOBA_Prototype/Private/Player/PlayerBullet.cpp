@@ -45,13 +45,12 @@ void APlayerBullet::NotifyActorBeginOverlap(AActor* OtherActor)
 	IHitable* Hitable =Cast<IHitable>(OtherActor);
 	if(Hitable != nullptr)
 	{
-	FHitData HitData = FHitData();
-	HitData.Damage = Damage;
-	HitData.HitBy = this;
-	Hitable->OnHit(FHitData(HitData));
-		UE_LOG(LogTemp, Warning, TEXT("same team"));
 		if(UHelpers::GetEnemyTeam(Team) == Hitable->GetTeam())
 		{
+			FHitData HitData = FHitData();
+			HitData.Damage = Damage;
+			HitData.HitBy = this;
+			Hitable->OnHit(FHitData(HitData));
 			UE_LOG(LogTemp, Warning, TEXT("enemy team"));
 			GetWorldTimerManager().ClearTimer(DestructionTimerHandle);
 			DestroyBullet();
