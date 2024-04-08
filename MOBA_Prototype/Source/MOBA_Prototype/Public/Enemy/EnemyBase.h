@@ -78,7 +78,7 @@ public:
 	virtual void TryAttack(AActor* Target);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void CallbackCanAttack();
+	void CallbackCanAttack(bool CanAttackValue);
 
 	virtual ETeam GetTeam() override;
 

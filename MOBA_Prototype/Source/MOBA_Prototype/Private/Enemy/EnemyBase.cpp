@@ -16,12 +16,13 @@ void AEnemyBase::BeginPlay()
 	Super::BeginPlay();
 	CurrentHealth = MaxHealth;
 	Execute_CallbackUpdateHealth(this);
+	CallbackCanAttack(true);
 }
 
 void AEnemyBase::ResetAttackCooldown()
 {
 	CanAttack = true;
-	CallbackCanAttack();
+	CallbackCanAttack(true);
 }
 
 void AEnemyBase::SetTeam(const ETeam NewTeam)
@@ -55,6 +56,7 @@ void AEnemyBase::TryAttack(AActor* Target)
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
 	
 	CanAttack = false;
+	CallbackCanAttack(false);
 	GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &AEnemyBase::ResetAttackCooldown, AttackCooldown, false);
 }
 
