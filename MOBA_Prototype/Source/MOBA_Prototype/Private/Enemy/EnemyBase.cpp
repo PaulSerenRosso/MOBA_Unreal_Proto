@@ -14,6 +14,9 @@ AEnemyBase::AEnemyBase()
 void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
+	CurrentHealth = MaxHealth;
+
+	OnHit(FHitData(50, this));
 	
 }
 
@@ -32,17 +35,6 @@ void AEnemyBase::SetTeam(const ETeam NewTeam)
 void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void AEnemyBase::UpdateHealth_Implementation()
-{
-}
-
-float AEnemyBase::GetPercentHealth()
-{
-	if (MaxHealth == 0) return 0.0f;
-	
-	return static_cast<float>(CurrentHealth) / static_cast<float>(MaxHealth);
 }
 
 void AEnemyBase::TryAttack(AActor* Target)
@@ -71,10 +63,11 @@ ETeam AEnemyBase::GetTeam()
 void AEnemyBase::OnHit(FHitData HitData)
 {
 	CurrentHealth -= HitData.Damage;
-	UpdateHealth();
+	Execute_CallbackUpdateHealth(this);
 	if (CurrentHealth <= 0)
 	{
-		Destroy();
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Died")));
+		//Destroy();
 	}
 }
 
@@ -86,6 +79,23 @@ void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 void AEnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
+
+int AEnemyBase::GetHealth()
+{
+	return CurrentHealth;
+}
+
+int AEnemyBase::GetMaxHealth()
+{
+	return MaxHealth;
+}
+
+float AEnemyBase::GetPercentageHealth()
+{
+	if (MaxHealth == 0) return 0.0f;
+	
+	return static_cast<float>(CurrentHealth) / static_cast<float>(MaxHealth);
 }
 
 void AEnemyBase::ChangedTeam_Implementation()

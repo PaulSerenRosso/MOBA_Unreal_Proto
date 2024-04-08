@@ -10,7 +10,7 @@
 #include "Turret.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API ATurret : public AActor
+class MOBA_PROTOTYPE_API ATurret : public AActor, public IHitable
 {
 	GENERATED_BODY()
 	
@@ -32,6 +32,12 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int targetCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Meta = (ExposeOnSpawn = true))
+	int CurrentHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int MaxHealth;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,4 +62,13 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	AAutoAimBullet* SpawnBullet(FVector TargetLocation);
+	
+	virtual ETeam GetTeam() override;
+
+	virtual void OnHit(FHitData HitData) override;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void UpdateHealth();
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

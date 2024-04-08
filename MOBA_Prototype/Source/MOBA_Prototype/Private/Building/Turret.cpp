@@ -94,6 +94,31 @@ void ATurret::RemoveHittableTarget(AActor* Target)
 	targetCount = HittableTargets.Num();
 }
 
+ETeam ATurret::GetTeam()
+{
+	return OwnTeam;
+}
+
+void ATurret::OnHit(FHitData HitData)
+{
+	CurrentHealth -= HitData.Damage;
+	UpdateHealth();
+	if (CurrentHealth <= 0)
+	{
+		Destroy();
+	}
+}
+
+void ATurret::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
+
+void ATurret::UpdateHealth_Implementation()
+{
+	//Code should be in blueprint
+}
+
 AAutoAimBullet* ATurret::SpawnBullet_Implementation(FVector TargetLocation)
 {
 	if (BulletClass == nullptr) return nullptr;

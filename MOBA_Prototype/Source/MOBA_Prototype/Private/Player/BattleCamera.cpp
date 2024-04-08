@@ -1,5 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#include "../Player/BattleCamera.h"
+#include "Player/BattleCamera.h"
 #include "Kismet/GameplayStatics.h"
 
 void ABattleCamera::Tick(float DeltaSeconds)

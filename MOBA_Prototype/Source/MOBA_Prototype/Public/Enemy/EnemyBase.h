@@ -8,10 +8,11 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Hitable.h"
+#include "Interfaces/Healthable.h"
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API AEnemyBase : public ACharacter, public IHitable, public IPlayerJoin
+class MOBA_PROTOTYPE_API AEnemyBase : public ACharacter, public IHitable, public IPlayerJoin, public IHealthable
 {
 	GENERATED_BODY()
 	
@@ -71,18 +72,12 @@ public:
 	void MoveCloseToTarget(FVector Target, float AcceptanceRadius);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void UpdateHealth();
-
-	UFUNCTION(BlueprintCallable)
-	float GetPercentHealth();
-
-	UFUNCTION(BlueprintNativeEvent)
 	void ChangedTeam();
 
 	UFUNCTION(BlueprintCallable)
-	void TryAttack(AActor* Target);
+	virtual void TryAttack(AActor* Target);
 
-	ETeam GetTeam() override;
+	virtual ETeam GetTeam() override;
 
 	virtual void OnHit(FHitData HitData) override;
 
@@ -93,4 +88,7 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	virtual int GetHealth() override;
+	virtual int GetMaxHealth() override;
+	virtual float GetPercentageHealth() override;
 };
