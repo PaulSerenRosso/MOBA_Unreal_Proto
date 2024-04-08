@@ -21,6 +21,7 @@ void AEnemyBase::BeginPlay()
 void AEnemyBase::ResetAttackCooldown()
 {
 	CanAttack = true;
+	CallbackCanAttack();
 }
 
 void AEnemyBase::SetTeam(const ETeam NewTeam)
@@ -48,7 +49,11 @@ void AEnemyBase::TryAttack(AActor* Target)
 	if (Hittable == this) return;
 
 	Hittable->OnHit(FHitData( Damage, this, Team ));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Attacked")));
+
+	
+	auto Str = "Attacked target: " + Target->GetName();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
+	
 	CanAttack = false;
 	GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &AEnemyBase::ResetAttackCooldown, AttackCooldown, false);
 }

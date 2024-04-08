@@ -63,8 +63,10 @@ void AAutoAimBullet::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (Target == nullptr || HitData == nullptr) return;
-
-	const FVector TargetLocation = Cast<AActor>(Target)->GetActorLocation();
+	const auto TargetActor = Cast<AActor>(Target);
+	if (TargetActor == nullptr) return;
+	
+	const FVector TargetLocation = TargetActor->GetActorLocation();
 	FVector Direction = TargetLocation - GetActorLocation();
 	Direction.Normalize();
 
