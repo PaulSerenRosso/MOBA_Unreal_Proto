@@ -11,6 +11,7 @@
 #include "Interfaces/Hitable.h"
 #include "Interfaces/PlayerAttackable.h"
 #include "Interfaces/PlayerPawnComponentHandlable.h"
+#include "UI/HealthWidgetComponent.h"
 #include "PlayerCharacter.generated.h"
 DECLARE_DELEGATE(FOnDie);
 UCLASS()
@@ -36,13 +37,21 @@ protected:
 	UPROPERTY(Replicated)
 	ETeam Team;
 	AActor* TeamSpawner;
+	USkeletalMeshComponent* SkeletalMesh;
+	UHealthWidgetComponent* HealthWidget;
 	FTimerHandle RespawnTimer;
 	UPROPERTY(Replicated)
 	bool IsDie = false;
-	UPROPERTY(Replicated)
 	int CurrentHealth;
 	virtual void DieServer();
 	virtual void RespawnPlayerServer();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void DieClients();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void RespawnPlayerClients();
+	UFUNCTION(NetMulticast,Reliable)
+	virtual void UpdateHealthClients(int InHealth);
+	
 public:
 	virtual void Move(FVector2D Direction);
 	UPROPERTY(Replicated)
@@ -62,8 +71,7 @@ public:
 	virtual int GetHealth() override;
 	virtual int GetMaxHealth() override;
 	virtual float GetPercentageHealth() override;
-	UFUNCTION(NetMulticast, Reliable)
-	virtual void OnHealthChangedClient();
+	
 	
 
 

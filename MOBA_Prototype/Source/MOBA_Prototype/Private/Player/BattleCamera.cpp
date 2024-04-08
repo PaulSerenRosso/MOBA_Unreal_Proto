@@ -36,10 +36,11 @@ void ABattleCamera::OnPawnChangedClientOwner(APawn* pawn)
 {
 	if(pawn == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TRUE"));
+		UE_LOG(LogTemp, Warning, TEXT("camera null"));
 		Target = Cast<AGameStateBattle>(GetWorld()->GetGameState())
 		->TeamTurrets[UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPlayerState<APlayerBattleState>()->Team];
 		Controller->SetCameraToControllerServer(this);
+		
 	}
 	else
 	{

@@ -12,7 +12,9 @@ class UEnhancedInputLocalPlayerSubsystem;
 
 void APlayerBattleController::BeginPlay()
 {
+	
 	Super::BeginPlay();
+	SpectatorPawn= GetPawn();
 	TryCreateChampionCharacter();
 }
 
@@ -48,7 +50,7 @@ void APlayerBattleController::OnRep_Pawn()
 {
 	Super::OnRep_Pawn();
 //	UE_LOG(LogTemp, Warning, TEXT("TEST"));
-	UpdateInputMappingClient();
+	UpdateBattleCharacter();
 }
 
 void APlayerBattleController::Tick(float DeltaSeconds)
@@ -92,6 +94,7 @@ bool APlayerBattleController::GetDirectionFromCharacterPositionToMousePosition(F
 void APlayerBattleController::SetCameraToControllerServer_Implementation(AActor* Camera)
 {
 	SetViewTargetWithBlend(Camera);
+	
 }
 
 
@@ -120,7 +123,7 @@ void APlayerBattleController::TryCreateChampionCharacter()
 
 
 
-void APlayerBattleController::UpdateInputMappingClient()
+void APlayerBattleController::UpdateBattleCharacter()
 {
 	CurrentBattleCharacter = Cast<APlayerCharacter>(GetPawn());
 	if(CheckOwningClient())
@@ -147,6 +150,8 @@ void APlayerBattleController::UpdateInputMappingClient()
 		};
 }
 
+
+
 void APlayerBattleController::AddBattleInputMapping()
 {
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
@@ -165,29 +170,30 @@ void APlayerBattleController::RemoveBattleInputMapping()
 	}
 }
 
-
-
 void APlayerBattleController::SpawnPlayerChampionCharacterServer_Implementation(UClass* currentChampionClass)
 {
+
 	UnPossess();
 	BattleCharacter = GetWorld()->SpawnActor<APlayerCharacter>(currentChampionClass,FVector(UKismetMathLibrary::RandomFloat()*100+1000.000000,1810.000000,92.012604), FRotator::ZeroRotator );
 	BattleCharacter->OnDieServer.BindUFunction(this, "UnPossessBattleCharacterServer");
 	BattleCharacter->OnRespawnServer.BindUFunction(this, "PossessBattleCharacterServer");
 	Possess(BattleCharacter);
-	UpdateInputMappingClient();
+	UpdateBattleCharacter();
 	CurrentBattleCharacter->OnSpawnedServer();
 }
 
 void APlayerBattleController::UnPossessBattleCharacterServer()
 {
 	UnPossess();
-	UpdateInputMappingClient();
+	Possess(SpectatorPawn);
+	UpdateBattleCharacter();
 }
 
 void APlayerBattleController::PossessBattleCharacterServer()
 {
+	UnPossess();
 	Possess(BattleCharacter);
-	UpdateInputMappingClient();
+	UpdateBattleCharacter();
 }
 
 

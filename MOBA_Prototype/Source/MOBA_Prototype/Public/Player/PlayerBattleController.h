@@ -22,8 +22,9 @@ class MOBA_PROTOTYPE_API APlayerBattleController : public APlayerController
 public:
 	bool GetDirectionFromCharacterPositionToMousePosition(FVector& Direction);
 	FOnPawnChanged OnPawnChangedOwnerClient;
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void SetCameraToControllerServer(AActor* Camera);
+	
 private:
 	UClass* ChampionClass;
 	APlayerCharacter* BattleCharacter;
@@ -38,10 +39,11 @@ private:
 	APlayerCharacter* CurrentBattleCharacter;
 	APawn* OldPawn;
 	FVector MouseDirection;
-	
+	APawn* SpectatorPawn;
 	
 protected:
-	virtual void UpdateInputMappingClient();
+	
+	virtual void UpdateBattleCharacter();
 	virtual void AddBattleInputMapping();
 	virtual void RemoveBattleInputMapping();
 	UFUNCTION(BlueprintCallable)
