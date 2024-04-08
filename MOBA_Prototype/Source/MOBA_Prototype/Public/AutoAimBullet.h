@@ -26,6 +26,11 @@ protected:
 	
 	void Ray(float Distance);
 
+	void DestroyOnServer();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DestroyOnClient();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

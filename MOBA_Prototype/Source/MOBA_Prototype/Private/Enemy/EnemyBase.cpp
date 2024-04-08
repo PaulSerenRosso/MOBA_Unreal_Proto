@@ -39,6 +39,9 @@ void AEnemyBase::Tick(float DeltaTime)
 
 void AEnemyBase::TryAttack(AActor* Target)
 {
+	if (Target == nullptr) return;
+	if (!HasAuthority()) return;
+	
 	const auto Dist = FVector::Dist(Target->GetActorLocation(), GetActorLocation());
 	if (Dist > AttackRange) return;
 
@@ -67,12 +70,31 @@ ETeam AEnemyBase::GetTeam()
 
 void AEnemyBase::OnHit(FHitData HitData)
 {
+	if(!HasAuthority()) return;
+	
 	CurrentHealth -= HitData.Damage;
-	Execute_CallbackUpdateHealth(this);
+	UpdateHealthClients(CurrentHealth);
+	
 	if (CurrentHealth <= 0)
 	{
-		Destroy();
+		DieOnServer();
 	}
+}
+
+void AEnemyBase::DieOnServer()
+{
+	DieOnClients();
+}
+
+void AEnemyBase::DieOnClients_Implementation()
+{
+	Destroy();
+}
+
+void AEnemyBase::UpdateHealthClients_Implementation(int InHealth)
+{
+	CurrentHealth = InHealth;
+	Execute_CallbackUpdateHealth(this);
 }
 
 void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

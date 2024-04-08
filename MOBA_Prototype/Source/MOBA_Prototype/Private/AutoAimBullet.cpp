@@ -20,6 +20,8 @@ void AAutoAimBullet::BeginPlay()
 
 void AAutoAimBullet::Ray(float Distance)
 {
+	if (!HasAuthority()) return;
+	
 	FVector Start = GetActorLocation();
 	const FVector TargetLocation = Cast<AActor>(Target)->GetActorLocation();
 	FVector Direction = TargetLocation - GetActorLocation();
@@ -54,6 +56,16 @@ void AAutoAimBullet::Ray(float Distance)
 
 	// auto Str = "Hit target: " + HitActor->GetName();
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
+	DestroyOnServer();
+}
+
+void AAutoAimBullet::DestroyOnServer()
+{
+	DestroyOnClient();
+}
+
+void AAutoAimBullet::DestroyOnClient_Implementation()
+{
 	Destroy();
 }
 

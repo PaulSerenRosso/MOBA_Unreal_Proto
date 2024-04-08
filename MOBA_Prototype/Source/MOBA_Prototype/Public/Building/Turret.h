@@ -12,7 +12,7 @@
 #include "Turret.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API ATurret : public AActor, public IHitable, public IHealthable, public IPlayerJoin
+class MOBA_PROTOTYPE_API ATurret : public AActor, public IHitable, public IHealthable
 {
 	GENERATED_BODY()
 	
@@ -50,14 +50,6 @@ protected:
 	void UpdateTeamMats();
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void DoMyThing();
-
-	
-	void OnPlayerJoin(APlayerController* PlayerController);
-
-
-
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UClass* BulletClass;
@@ -86,4 +78,14 @@ public:
 	virtual int GetHealth() override;
 	virtual int GetMaxHealth() override;
 	virtual float GetPercentageHealth() override;
+
+	virtual void DieOnServer();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void DieOnClients();
+	
+	UFUNCTION(NetMulticast,Reliable)
+	virtual void UpdateHealthClients(int InHealth);
+
+	virtual void SpawnBulletsOnClients(FVector TargetLocation, FHitData* HitData, IHitable* Target);
 };

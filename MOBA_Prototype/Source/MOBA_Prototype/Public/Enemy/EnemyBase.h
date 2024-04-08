@@ -84,9 +84,22 @@ public:
 
 	virtual void OnHit(FHitData HitData) override;
 
+
+	
+	virtual void DieOnServer();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void DieOnClients();
+	
+	UFUNCTION(NetMulticast,Reliable)
+	virtual void UpdateHealthClients(int InHealth);
+
+	
+
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 	void PlayerJoin_Implementation();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

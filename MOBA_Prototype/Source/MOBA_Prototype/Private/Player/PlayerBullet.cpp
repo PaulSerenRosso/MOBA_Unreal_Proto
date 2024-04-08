@@ -18,7 +18,6 @@ APlayerBullet::APlayerBullet()
 
 void APlayerBullet::SetUp(float InDamage, float InSpeed, float InRange, ETeam InTeam)
 {
-	
 	this->Damage = InDamage;
 	this->Speed = InSpeed;
 	this->Team = InTeam;
@@ -36,13 +35,12 @@ void APlayerBullet::DestroyBullet()
 
 void APlayerBullet::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	
 	Super::NotifyActorBeginOverlap(OtherActor);
 	UE_LOG(LogTemp, Warning, TEXT("overlap"));
 	if(!HasAuthority()) return;
 	UE_LOG(LogTemp, Warning, TEXT("hasauthority %s"), *OtherActor->GetName());
 
-	IHitable* Hitable =Cast<IHitable>(OtherActor);
+	IHitable* Hitable = Cast<IHitable>(OtherActor);
 	if(Hitable != nullptr)
 	{
 		if(UHelpers::GetEnemyTeam(Team) == Hitable->GetTeam())

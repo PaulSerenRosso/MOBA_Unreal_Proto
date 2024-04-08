@@ -30,7 +30,8 @@ void ATurret::BeginPlay()
 	const auto GameStateBattle = Cast<AGameStateBattle>(GameState);
 	if (GameStateBattle == nullptr) return;
 
-	GameStateBattle->AddTurret(this, OwnTeam);
+	if (HasAuthority()) GameStateBattle->AddTurret(this, OwnTeam);
+	
 	Execute_CallbackUpdateHealth(this);
 }
 
@@ -43,6 +44,7 @@ void ATurret::Tick(float DeltaTime)
 
 void ATurret::AddHittableTarget(AActor* Target)
 {
+	if (!HasAuthority()) return;
 	IHitable* Hittable = Cast<IHitable>(Target);
 
 	if (Hittable == nullptr) return;
@@ -56,6 +58,7 @@ void ATurret::AddHittableTarget(AActor* Target)
 
 	if (targetCount > 0 && !IsAttacking)
 	{
+		IsAttacking = true;
 		Attack();
 	}
 }
@@ -85,21 +88,17 @@ void ATurret::Attack()
 
 	if (Activated)
 	{
-		const auto Bullet = SpawnBullet(GetActorLocation() + FVector(0, 0, 500));
-		Bullet->Init(Target, HitData);
+		const auto Location = GetActorLocation() + FVector(0, 0, 500);
+		SpawnBulletsOnClients(Location, HitData, Target);
 	}
 	
 	GetWorldTimerManager().SetTimer(AttackTimer, this, &ATurret::Attack, AttackInterval);
 }
 
-void ATurret::DoMyThing()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Do My Thing")));
-	UpdateTeamMats();
-}
-
 void ATurret::RemoveHittableTarget(AActor* Target)
 {
+	if (!HasAuthority()) return;
+	
 	IHitable* Hittable = Cast<IHitable>(Target);
 	if (Hittable == nullptr) return;
 
@@ -146,6 +145,29 @@ float ATurret::GetPercentageHealth()
 	if (MaxHealth == 0) return 0.0f;
 	
 	return static_cast<float>(CurrentHealth) / static_cast<float>(MaxHealth);
+}
+
+void ATurret::DieOnServer()
+{
+	DieOnClients();
+	//TODO: Finish the game
+}
+
+void ATurret::SpawnBulletsOnClients(FVector TargetLocation, FHitData* HitData, IHitable* Target)
+{
+	const auto Bullet = SpawnBullet(TargetLocation);
+	Bullet->Init(Target, HitData);
+}
+
+void ATurret::UpdateHealthClients_Implementation(int InHealth)
+{
+	CurrentHealth = InHealth;
+	Execute_CallbackUpdateHealth(this);
+}
+
+void ATurret::DieOnClients_Implementation()
+{
+	Destroy();
 }
 
 AAutoAimBullet* ATurret::SpawnBullet_Implementation(FVector TargetLocation)
