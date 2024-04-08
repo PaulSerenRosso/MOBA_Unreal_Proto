@@ -17,5 +17,8 @@ class MOBA_PROTOTYPE_API UHealthBarWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateProgressBar(float value);
+	void UpdateProgressBar(float Value);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetTeamColor(FLinearColor Color);
 };

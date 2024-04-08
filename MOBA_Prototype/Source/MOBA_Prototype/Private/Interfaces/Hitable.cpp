@@ -7,7 +7,7 @@ FHitData::FHitData() : Damage(0), HitBy(nullptr)
 {
 }
 
-FHitData::FHitData(const float Damage, AActor* HitBy) : Damage(Damage), HitBy(HitBy)
+FHitData::FHitData(const float Damage, AActor* HitBy, ETeam Team) : Damage(Damage), HitBy(HitBy), InstigatorTeam(Team)
 {
 }
 

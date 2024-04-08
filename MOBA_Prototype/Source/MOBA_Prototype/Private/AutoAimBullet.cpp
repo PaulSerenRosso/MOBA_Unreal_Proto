@@ -46,9 +46,14 @@ void AAutoAimBullet::Ray(float Distance)
 	auto HitTarget = Cast<IHitable>(HitActor);
 	
 	if (HitTarget == nullptr) return;
+
+	if (HitTarget->GetTeam() == HitData->InstigatorTeam) return;
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("BULLET : Hit a HitTarget")));
 	HitTarget->OnHit(*HitData);
+
+	auto Str = "Hit target: " + HitActor->GetName();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
 	Destroy();
 }
 
@@ -68,13 +73,6 @@ void AAutoAimBullet::Tick(float DeltaTime)
 	// Check if the bullet will hit the target
 	Ray(Speed * DeltaTime);
 	SetActorLocation(NewLocation);
-	
-
-	// if (FVector::Dist(GetActorLocation(), TargetLocation) < 50.0f)
-	// {
-	// 	Target->OnHit(*HitData);
-	// 	Destroy();
-	// }
 }
 
 void AAutoAimBullet::Init(IHitable* Trget, FHitData* Hit, const float Spd)

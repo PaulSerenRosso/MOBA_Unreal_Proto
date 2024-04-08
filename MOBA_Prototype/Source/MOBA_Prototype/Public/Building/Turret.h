@@ -6,11 +6,12 @@
 #include "AutoAimBullet.h"
 #include "Enums.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/Healthable.h"
 #include "Interfaces/Hitable.h"
 #include "Turret.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API ATurret : public AActor, public IHitable
+class MOBA_PROTOTYPE_API ATurret : public AActor, public IHitable, public IHealthable
 {
 	GENERATED_BODY()
 	
@@ -66,9 +67,11 @@ public:
 	virtual ETeam GetTeam() override;
 
 	virtual void OnHit(FHitData HitData) override;
-
-	UFUNCTION(BlueprintNativeEvent)
-	void UpdateHealth();
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	
+	virtual int GetHealth() override;
+	virtual int GetMaxHealth() override;
+	virtual float GetPercentageHealth() override;
 };

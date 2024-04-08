@@ -15,13 +15,16 @@ struct FHitData
 
 	FHitData();
 	
-	FHitData(const float Damage, AActor* HitBy);
+	FHitData(const float Damage, AActor* HitBy, ETeam Team);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float Damage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	AActor* HitBy;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ETeam InstigatorTeam;
 };
 
 

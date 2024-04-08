@@ -18,6 +18,7 @@ ATurret::ATurret()
 void ATurret::BeginPlay()
 {
 	Super::BeginPlay();
+	CurrentHealth = MaxHealth;
 
 	auto GM = GetWorld()->GetAuthGameMode();
 	if (GM == nullptr) return;
@@ -26,6 +27,7 @@ void ATurret::BeginPlay()
 	if (GameModeBattle == nullptr) return;
 
 	GameModeBattle->AddTurret(this, OwnTeam);
+	Execute_CallbackUpdateHealth(this);
 }
 
 // Called every frame
@@ -73,6 +75,8 @@ void ATurret::Attack()
 	
 	FHitData* HitData = new FHitData();
 	HitData->Damage = 20;
+	HitData->HitBy = this;
+	HitData->InstigatorTeam = OwnTeam;
 	//if (Activated) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Turret %s is attacking %s"), *GetName(), *Cast<AActor>(Target)->GetName()));
 
 	if (Activated)
@@ -102,9 +106,10 @@ ETeam ATurret::GetTeam()
 void ATurret::OnHit(FHitData HitData)
 {
 	CurrentHealth -= HitData.Damage;
-	UpdateHealth();
+	Execute_CallbackUpdateHealth(this);
 	if (CurrentHealth <= 0)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("A turret has been destroyed!")));
 		Destroy();
 	}
 }
@@ -114,9 +119,21 @@ void ATurret::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
-void ATurret::UpdateHealth_Implementation()
+int ATurret::GetHealth()
 {
-	//Code should be in blueprint
+	return CurrentHealth;
+}
+
+int ATurret::GetMaxHealth()
+{
+	return MaxHealth;
+}
+
+float ATurret::GetPercentageHealth()
+{
+	if (MaxHealth == 0) return 0.0f;
+	
+	return static_cast<float>(CurrentHealth) / static_cast<float>(MaxHealth);
 }
 
 AAutoAimBullet* ATurret::SpawnBullet_Implementation(FVector TargetLocation)

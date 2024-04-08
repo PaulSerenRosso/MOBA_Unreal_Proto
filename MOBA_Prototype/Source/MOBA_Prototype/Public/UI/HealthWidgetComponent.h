@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums.h"
 #include "Components/WidgetComponent.h"
 #include "HealthWidgetComponent.generated.h"
 
@@ -16,5 +17,5 @@ class MOBA_PROTOTYPE_API UHealthWidgetComponent : public UWidgetComponent
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void UpdateUI();
+	void UpdateUI(ETeam Team);
 };

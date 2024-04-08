@@ -15,9 +15,7 @@ void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 	CurrentHealth = MaxHealth;
-
-	OnHit(FHitData(50, this));
-	
+	Execute_CallbackUpdateHealth(this);
 }
 
 void AEnemyBase::ResetAttackCooldown()
@@ -49,7 +47,7 @@ void AEnemyBase::TryAttack(AActor* Target)
 	if (Hittable->GetTeam() == Team) return;
 	if (Hittable == this) return;
 
-	Hittable->OnHit(FHitData( Damage, this ));
+	Hittable->OnHit(FHitData( Damage, this, Team ));
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Attacked")));
 	CanAttack = false;
 	GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &AEnemyBase::ResetAttackCooldown, AttackCooldown, false);
@@ -66,8 +64,7 @@ void AEnemyBase::OnHit(FHitData HitData)
 	Execute_CallbackUpdateHealth(this);
 	if (CurrentHealth <= 0)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Died")));
-		//Destroy();
+		Destroy();
 	}
 }
 
