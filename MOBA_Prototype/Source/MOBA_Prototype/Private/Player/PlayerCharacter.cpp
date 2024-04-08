@@ -11,7 +11,6 @@ APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -24,8 +23,9 @@ void APlayerCharacter::BeginPlay()
 		PlayerAttackables.Add(InteractableComponent);
 		InteractableComponent->SetUp(this);
 	}
-	CurrentHealth = GetMaxHealth();
-	OnHealthChangedClient();
+	UpdateHealthClients(GetMaxHealth());
+	SkeletalMesh = Cast<USkeletalMeshComponent>(GetComponentByClass(USkeletalMeshComponent::StaticClass()));
+	HealthWidget = Cast<UHealthWidgetComponent>(GetComponentByClass(UHealthWidgetComponent::StaticClass()));
 }
 
 // Called every frame
@@ -38,13 +38,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::DieServer()
 {
 	IsDie = true;
-	CurrentHealth = GetMaxHealth();
-	OnHealthChangedClient();
 	GetWorldTimerManager().SetTimer(RespawnTimer,this,
 		&APlayerCharacter::RespawnPlayerServer,
 		Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode())->RespawnTime, false);
 	if(OnDieServer.IsBound())
 		OnDieServer.Execute();
+	DieClients();
 }
 
 void APlayerCharacter::RespawnPlayerServer()
@@ -53,9 +52,28 @@ void APlayerCharacter::RespawnPlayerServer()
 	SetActorLocation(TeamSpawner->GetActorLocation());
 	if(OnRespawnServer.IsBound())
 		OnRespawnServer.Execute();
+	UpdateHealthClients(GetMaxHealth());
+	RespawnPlayerClients();
+}
+
+void APlayerCharacter::DieClients_Implementation()
+{
+	SkeletalMesh->SetVisibility(false);
+	HealthWidget->SetVisibility(false);
 }
 
 
+void APlayerCharacter::RespawnPlayerClients_Implementation()
+{
+	SkeletalMesh->SetVisibility(true);
+	HealthWidget->SetVisibility(true);
+}
+
+void APlayerCharacter::UpdateHealthClients_Implementation(int InHealth)
+{
+	CurrentHealth = InHealth;
+	Execute_CallbackUpdateHealth(this);
+}
 
 void APlayerCharacter::Move(FVector2D Direction)
 {
@@ -83,13 +101,12 @@ ETeam APlayerCharacter::GetPlayerTeam()
 void APlayerCharacter::OnHit(FHitData HitData)
 {
 	if(IsDie) return;
-	CurrentHealth -= HitData.Damage;
+	UpdateHealthClients(CurrentHealth-HitData.Damage);
 	UE_LOG(LogTemp, Warning, TEXT("hit by %s the target is %s"), *HitData.HitBy->GetName(), *GetName());
-	if(CurrentHealth < 0)
+	if(CurrentHealth <= 0)
 	{
 		DieServer();
 	}
-	OnHealthChangedClient();
 }
 
 ETeam APlayerCharacter::GetTeam()
@@ -148,10 +165,8 @@ float APlayerCharacter::GetPercentageHealth()
 	return static_cast<float>(GetHealth())/static_cast<float>(GetMaxHealth());
 }
 
-void APlayerCharacter::OnHealthChangedClient_Implementation()
-{
-	Execute_CallbackUpdateHealth(this);
-}
+
+
 
 
 void APlayerCharacter::CancelAttackServer_Implementation()
@@ -180,7 +195,6 @@ void APlayerCharacter::RotateServer_Implementation(FVector Direction)
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlayerCharacter, CurrentRotation);
-	DOREPLIFETIME(APlayerCharacter, CurrentHealth);
 	DOREPLIFETIME(APlayerCharacter, Team);
 }
 
