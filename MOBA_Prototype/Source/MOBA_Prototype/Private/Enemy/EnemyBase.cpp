@@ -3,6 +3,8 @@
 
 #include "Enemy/EnemyBase.h"
 
+#include "Net/UnrealNetwork.h"
+
 // Sets default values
 AEnemyBase::AEnemyBase()
 {
@@ -107,6 +109,8 @@ void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 void AEnemyBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AEnemyBase, CurrentHealth);
+	DOREPLIFETIME(AEnemyBase, Team);
 }
 
 int AEnemyBase::GetHealth()

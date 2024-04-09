@@ -120,9 +120,6 @@ void APlayerBattleController::TryCreateChampionCharacter()
 	}
 }
 
-
-
-
 void APlayerBattleController::UpdateBattleCharacter()
 {
 	CurrentBattleCharacter = Cast<APlayerCharacter>(GetPawn());

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ChampionData.h"
+#include "Enums.h"
 #include "Engine/GameInstance.h"
 #include "MobaPrototypeGameInstance.generated.h"
 
@@ -17,9 +18,17 @@ class MOBA_PROTOTYPE_API UMobaPrototypeGameInstance : public UGameInstance
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerChampionClass(int ChampionIndex);
+
 	UFUNCTION(BlueprintCallable)
 	UClass* GetPlayerChampionClass();
+
+	void SetWinnerTeam(ETeam Team);
+
+	UFUNCTION(BlueprintCallable)
+	ETeam GetWinnerTeam();
 private:
+	ETeam WinnerTeam;
+	
 	UPROPERTY(EditAnywhere)
 	TArray<UClass*> AllChampionClasses;
 	UClass* CurrentPlayerChampionClass;

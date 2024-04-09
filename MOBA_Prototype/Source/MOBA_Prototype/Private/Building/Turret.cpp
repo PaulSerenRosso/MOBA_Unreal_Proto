@@ -6,6 +6,7 @@
 #include "AutoAimBullet.h"
 #include "GameModeBattle.h"
 #include "GameStateBattle.h"
+#include "MobaPrototypeGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerBattleController.h"
@@ -112,14 +113,14 @@ ETeam ATurret::GetTeam()
 	return OwnTeam;
 }
 
-void ATurret::OnHit(FHitData HitData)
+void ATurret::OnHit(const FHitData HitData)
 {
 	CurrentHealth -= HitData.Damage;
-	Execute_CallbackUpdateHealth(this);
+	UpdateHealthClients(CurrentHealth);
 	if (CurrentHealth <= 0)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, FString::Printf(TEXT("A turret has been destroyed!")));
-		Destroy();
+		DieOnServer();
 	}
 }
 
@@ -150,7 +151,6 @@ float ATurret::GetPercentageHealth()
 void ATurret::DieOnServer()
 {
 	DieOnClients();
-	//TODO: Finish the game
 }
 
 void ATurret::SpawnBulletsOnClients(FVector TargetLocation, FHitData* HitData, IHitable* Target)
@@ -159,7 +159,7 @@ void ATurret::SpawnBulletsOnClients(FVector TargetLocation, FHitData* HitData, I
 	Bullet->Init(Target, HitData);
 }
 
-void ATurret::UpdateHealthClients_Implementation(int InHealth)
+void ATurret::UpdateHealthClients_Implementation(const int InHealth)
 {
 	CurrentHealth = InHealth;
 	Execute_CallbackUpdateHealth(this);
@@ -167,7 +167,14 @@ void ATurret::UpdateHealthClients_Implementation(int InHealth)
 
 void ATurret::DieOnClients_Implementation()
 {
-	Destroy();
+	const auto GameInstance = Cast<UMobaPrototypeGameInstance>(GetGameInstance());
+	const ETeam WinnerTeam = OwnTeam == ETeam::Team1 ? ETeam::Team2 : ETeam::Team1;
+	
+	if (GameInstance != nullptr) GameInstance->SetWinnerTeam(WinnerTeam);
+	
+	SetHidden(true);
+	UGameplayStatics::OpenLevel(GetWorld(), "EndGame");
+	//Destroy();
 }
 
 AAutoAimBullet* ATurret::SpawnBullet_Implementation(FVector TargetLocation)

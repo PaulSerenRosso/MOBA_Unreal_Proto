@@ -13,3 +13,13 @@ UClass* UMobaPrototypeGameInstance::GetPlayerChampionClass()
 {
 	return CurrentPlayerChampionClass;
 }
+
+void UMobaPrototypeGameInstance::SetWinnerTeam(const ETeam Team)
+{
+	WinnerTeam = Team;
+}
+
+ETeam UMobaPrototypeGameInstance::GetWinnerTeam()
+{
+	return WinnerTeam;
+}
