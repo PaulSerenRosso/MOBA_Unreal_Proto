@@ -24,7 +24,7 @@ ATurret::ATurret()
 void ATurret::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentHealth = MaxHealth;
+	CurrentHealth = TurretInfo->MaxHealth;
 
 	auto GameState = GetWorld()->GetGameState();
 	if (GameState == nullptr) return;
@@ -53,6 +53,15 @@ void ATurret::AddHittableTarget(AActor* Target)
 
 	if (const ETeam Team = Hittable->GetTeam(); Team == ETeam::Neutral || Team == OwnTeam) return;
 	if (HittableTargets.Contains(Hittable)) return;
+
+	auto Player = Cast<APlayerCharacter>(Target);
+	if (Player != nullptr)
+	{
+		if (Player->IsPlayerDead())
+		{
+			return;
+		}
+	}
 	
 	HittableTargets.Add(Hittable);
 
@@ -81,9 +90,19 @@ void ATurret::Attack()
 		Attack();
 		return;
 	}
+	auto Player = Cast<APlayerCharacter>(Target);
+	if (Player != nullptr)
+	{
+		if (Player->IsPlayerDead())
+		{
+			HittableTargets.RemoveAt(0);
+			Attack();
+			return;
+		}
+	}
 	
 	FHitData* HitData = new FHitData();
-	HitData->Damage = 20;
+	HitData->Damage = TurretInfo->Damage;
 	HitData->HitBy = this;
 	HitData->InstigatorTeam = OwnTeam;
 	//if (Activated) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Turret %s is attacking %s"), *GetName(), *Cast<AActor>(Target)->GetName()));
@@ -94,7 +113,7 @@ void ATurret::Attack()
 		SpawnBulletsOnClients(Location, HitData, Target);
 	}
 	
-	GetWorldTimerManager().SetTimer(AttackTimer, this, &ATurret::Attack, AttackInterval);
+	GetWorldTimerManager().SetTimer(AttackTimer, this, &ATurret::Attack, TurretInfo->AttackCooldown);
 }
 
 void ATurret::RemoveHittableTarget(AActor* Target)
@@ -139,14 +158,14 @@ int ATurret::GetHealth()
 
 int ATurret::GetMaxHealth()
 {
-	return MaxHealth;
+	return TurretInfo->MaxHealth;
 }
 
 float ATurret::GetPercentageHealth()
 {
-	if (MaxHealth == 0) return 0.0f;
+	if (TurretInfo->MaxHealth == 0) return 0.0f;
 	
-	return static_cast<float>(CurrentHealth) / static_cast<float>(MaxHealth);
+	return static_cast<float>(CurrentHealth) / static_cast<float>(TurretInfo->MaxHealth);
 }
 
 void ATurret::DieOnServer()

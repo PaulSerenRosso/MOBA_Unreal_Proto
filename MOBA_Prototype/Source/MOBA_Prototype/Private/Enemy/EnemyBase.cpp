@@ -16,7 +16,7 @@ AEnemyBase::AEnemyBase()
 void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentHealth = MaxHealth;
+	CurrentHealth = EnemyAttackInfo->MaxHealth;
 
 	Execute_CallbackUpdateHealth(this);
 	CallbackCanAttack(true);
@@ -47,7 +47,7 @@ void AEnemyBase::TryAttack(AActor* Target)
 	if (!HasAuthority()) return;
 	
 	const auto Dist = FVector::Dist(Target->GetActorLocation(), GetActorLocation());
-	if (Dist > AttackRange) return;
+	if (Dist > EnemyAttackInfo->Range) return;
 
 	const auto Hittable = Cast<IHitable>(Target);
 	if (Hittable == nullptr) return;
@@ -55,16 +55,18 @@ void AEnemyBase::TryAttack(AActor* Target)
 	if (!CanAttack) return;
 	if (Hittable->GetTeam() == Team) return;
 	if (Hittable == this) return;
+	
+	auto mult = Cast<AEnemyBase>(Target) == nullptr ? 1 : 0.5;
 
-	Hittable->OnHit(FHitData( Damage, this, Team ));
+	Hittable->OnHit(FHitData( EnemyAttackInfo->Damage * mult, this, Team ));
 
 	
-	auto Str = "Attacked target: " + Target->GetName();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
+	//auto Str = "Attacked target: " + Target->GetName();
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
 	
 	CanAttack = false;
 	CallbackCanAttack(false);
-	GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &AEnemyBase::ResetAttackCooldown, AttackCooldown, false);
+	GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &AEnemyBase::ResetAttackCooldown, EnemyAttackInfo->AttackCooldown, false);
 }
 
 ETeam AEnemyBase::GetTeam()
@@ -120,14 +122,14 @@ int AEnemyBase::GetHealth()
 
 int AEnemyBase::GetMaxHealth()
 {
-	return MaxHealth;
+	return EnemyAttackInfo->MaxHealth;
 }
 
 float AEnemyBase::GetPercentageHealth()
 {
-	if (MaxHealth == 0) return 0.0f;
+	if (EnemyAttackInfo->MaxHealth == 0) return 0.0f;
 	
-	return static_cast<float>(CurrentHealth) / static_cast<float>(MaxHealth);
+	return static_cast<float>(CurrentHealth) / static_cast<float>(EnemyAttackInfo->MaxHealth);
 }
 
 void AEnemyBase::ChangedTeam_Implementation()

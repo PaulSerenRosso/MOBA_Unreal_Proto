@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Enums.h"
+#include "DesignData/EnemyAttackInfo.h"
 #include "Interfaces/PlayerJoin.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
@@ -29,15 +30,6 @@ protected:
 	FVector TargetLocation;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int AttackRange = 100;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Damage = 10;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackCooldown = 2.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool CanAttack = true;
 
 	FTimerHandle AttackTimerHandle;
@@ -58,7 +50,7 @@ public:
 	int CurrentHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int MaxHealth;
+	UEnemyAttackInfo* EnemyAttackInfo;
 
 	void SetTeam(ETeam NewTeam); 
 	

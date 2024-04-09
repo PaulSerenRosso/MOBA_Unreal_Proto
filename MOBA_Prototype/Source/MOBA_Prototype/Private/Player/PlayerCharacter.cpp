@@ -28,6 +28,7 @@ void APlayerCharacter::BeginPlay()
 	SkeletalMesh = Cast<USkeletalMeshComponent>(GetComponentByClass(USkeletalMeshComponent::StaticClass()));
 	HealthWidget = Cast<UHealthWidgetComponent>(GetComponentByClass(UHealthWidgetComponent::StaticClass()));
 	
+	
 	// Don't rotate character to camera direction
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -38,6 +39,7 @@ void APlayerCharacter::BeginPlay()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 0, 0.f);
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
+	HealthWidget->UpdateUI(Team);
 }
 
 // Called every frame
@@ -49,7 +51,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::DieServer()
 {
-	IsDie = true;
+	IsDead = true;
 	GetWorldTimerManager().SetTimer(RespawnTimer,this,
 		&APlayerCharacter::RespawnPlayerServer,
 		Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode())->RespawnTime, false);
@@ -61,7 +63,7 @@ void APlayerCharacter::DieServer()
 
 void APlayerCharacter::RespawnPlayerServer()
 {
-	IsDie = false;
+	IsDead = false;
 	SetActorLocation(TeamSpawner->GetActorLocation());
 	if(OnRespawnServer.IsBound())
 		OnRespawnServer.Broadcast();
@@ -86,6 +88,13 @@ void APlayerCharacter::UpdateHealthClients_Implementation(int InHealth)
 {
 	CurrentHealth = InHealth;
 	Execute_CallbackUpdateHealth(this);
+}
+
+void APlayerCharacter::SetTeamClients_Implementation(ETeam InTeam)
+{
+	Team = InTeam;
+	HealthWidget->UpdateUI(Team);
+	
 }
 
 void APlayerCharacter::Move(FVector2D Direction)
@@ -113,7 +122,7 @@ ETeam APlayerCharacter::GetPlayerTeam()
 
 void APlayerCharacter::OnHit(FHitData HitData)
 {
-	if(IsDie) return;
+	if(IsDead) return;
 	UpdateHealthClients(CurrentHealth-HitData.Damage);
 	UE_LOG(LogTemp, Warning, TEXT("hit by %s the target is %s"), *HitData.HitBy->GetName(), *GetName());
 	if(CurrentHealth <= 0)
@@ -158,7 +167,8 @@ void APlayerCharacter::OnSpawnedServer()
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team : %s"), *TeamSpawner->GetName());
-	Team = PlayerBattleState->Team;
+	SetTeamClients(PlayerBattleState->Team);
+	
 	SetActorLocation(TeamSpawner->GetActorLocation());
 		
 }
@@ -178,8 +188,10 @@ float APlayerCharacter::GetPercentageHealth()
 	return static_cast<float>(GetHealth())/static_cast<float>(GetMaxHealth());
 }
 
-
-
+bool APlayerCharacter::IsPlayerDead() const
+{
+	return IsDead;
+}
 
 
 void APlayerCharacter::CancelAttackServer_Implementation()

@@ -22,6 +22,7 @@ class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter, public IPlayerPaw
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
+	
 	FOnDie OnDieServer;
 	FOnDie OnRespawnServer;
 	
@@ -41,7 +42,7 @@ protected:
 	UHealthWidgetComponent* HealthWidget;
 	FTimerHandle RespawnTimer;
 	UPROPERTY(Replicated)
-	bool IsDie = false;
+	bool IsDead = false;
 	int CurrentHealth;
 	virtual void DieServer();
 	virtual void RespawnPlayerServer();
@@ -51,6 +52,9 @@ protected:
 	virtual void RespawnPlayerClients();
 	UFUNCTION(NetMulticast,Reliable)
 	virtual void UpdateHealthClients(int InHealth);
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void SetTeamClients(ETeam InTeam);
+	
 	
 public:
 	virtual void Move(FVector2D Direction);
@@ -66,12 +70,14 @@ public:
 	UFUNCTION(Server, Unreliable)
 	virtual void CancelAttackServer();
 	virtual void OnHit(FHitData HitData) override;
-	virtual ETeam GetTeam() override;
+	UFUNCTION(BlueprintCallable, BlueprintPure) virtual ETeam GetTeam() override;
 	virtual void OnSpawnedServer();
 	virtual int GetHealth() override;
 	virtual int GetMaxHealth() override;
 	virtual float GetPercentageHealth() override;
-	
+
+	UFUNCTION(BlueprintCallable)
+	bool IsPlayerDead() const;
 	
 
 

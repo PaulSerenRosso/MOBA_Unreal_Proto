@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AutoAimBullet.h"
 #include "Enums.h"
+#include "DesignData/TurretInfo.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/Healthable.h"
 #include "Interfaces/Hitable.h"
@@ -25,7 +26,7 @@ protected:
 	bool IsAttacking = false;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float AttackInterval = 2.0f;
+	UTurretInfo* TurretInfo;
 	
 	TArray<IHitable*> HittableTargets;
 
@@ -37,9 +38,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Meta = (ExposeOnSpawn = true))
 	int CurrentHealth;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int MaxHealth;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
