@@ -11,8 +11,9 @@
 /**
  * 
  */
-
-DECLARE_DELEGATE_OneParam(FOnPawnChanged, APawn*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPawnChanged, APawn*);
+DECLARE_MULTICAST_DELEGATE(FOnRemoveInputMap);
+DECLARE_MULTICAST_DELEGATE(FOnAddInputMap);
 UCLASS()
 class MOBA_PROTOTYPE_API APlayerBattleController : public APlayerController
 {
@@ -22,10 +23,13 @@ class MOBA_PROTOTYPE_API APlayerBattleController : public APlayerController
 public:
 	bool GetDirectionFromCharacterPositionToMousePosition(FVector& Direction);
 	FOnPawnChanged OnPawnChangedOwnerClient;
+	FOnRemoveInputMap OnRemoveInputMapOwnerClient;
+	FOnAddInputMap OnAddInputMapOwnerClient;
 	UFUNCTION(NetMulticast, Reliable)
 	void SetCameraToControllerServer(AActor* Camera);
 	
 private:
+	
 	UClass* ChampionClass;
 	APlayerCharacter* BattleCharacter;
 	UPROPERTY(EditAnywhere)
@@ -42,7 +46,10 @@ private:
 	APawn* SpectatorPawn;
 	
 protected:
-	
+	UFUNCTION(Client, Reliable)
+	virtual void RemoveInputMap();
+	UFUNCTION(Client, Reliable)
+	virtual void AddInputMap();
 	virtual void UpdateBattleCharacter();
 	virtual void AddBattleInputMapping();
 	virtual void RemoveBattleInputMapping();
@@ -61,6 +68,7 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnActivateBattleCharacterClientOwner();
+	
 	UFUNCTION(BlueprintImplementableEvent)
 void OnDeactivateBattleCharacterClientOwner();
 	UFUNCTION(BlueprintCallable)

@@ -13,7 +13,7 @@
 #include "Interfaces/PlayerPawnComponentHandlable.h"
 #include "UI/HealthWidgetComponent.h"
 #include "PlayerCharacter.generated.h"
-DECLARE_DELEGATE(FOnDie);
+DECLARE_MULTICAST_DELEGATE(FOnDie);
 UCLASS()
 class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter, public IPlayerPawnComponentHandlable, public IHitable, public IHealthable
 {

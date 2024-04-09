@@ -31,7 +31,7 @@ void ATurret::BeginPlay()
 	const auto GameStateBattle = Cast<AGameStateBattle>(GameState);
 	if (GameStateBattle == nullptr) return;
 
-	if (HasAuthority()) GameStateBattle->AddTurret(this, OwnTeam);
+	GameStateBattle->AddTurret(this, OwnTeam);
 	
 	Execute_CallbackUpdateHealth(this);
 }

@@ -23,7 +23,9 @@ void ABattleCamera::BeginPlay()
 	if(Controller != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Controller not null"));
-		Controller->OnPawnChangedOwnerClient.BindUFunction(this, "OnPawnChangedClientOwner");
+		Controller->OnRemoveInputMapOwnerClient.AddUFunction(this, "OnRemoveInputClientOwner");
+		Controller->OnPawnChangedOwnerClient.AddUFunction(this, "OnPawnChangedClientOwner");
+		Controller->OnAddInputMapOwnerClient.AddUFunction(this, "OnAddInputClientOwner");
 	}
 	else
 	{
@@ -32,22 +34,31 @@ void ABattleCamera::BeginPlay()
 	}
 }
 
+void ABattleCamera::OnAddInputClientOwner()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AddInputClientOwner %s "), *Controller->GetPawn()->GetName());
+	Target = Controller->GetPawn();
+	Controller->SetViewTarget(this);
+}
+
 void ABattleCamera::OnPawnChangedClientOwner(APawn* pawn)
 {
-	if(pawn == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("camera null"));
-		Target = Cast<AGameStateBattle>(GetWorld()->GetGameState())
-		->TeamTurrets[UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPlayerState<APlayerBattleState>()->Team];
-		Controller->SetCameraToControllerServer(this);
-		
-	}
-	else
+	if(pawn != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("FALSEEE %s controller %s controllerCharacter %s"), *pawn->GetName(), *Controller->GetName(), *Controller->GetPawn()->GetName());
 		
 		Target = pawn;
-		Controller->SetCameraToControllerServer(this);
-		
+		//Controller->SetCameraToControllerServer(this);
+		Controller->SetViewTarget(this);
 	}
+}
+
+void ABattleCamera::OnRemoveInputClientOwner()
+{
+	Target = Cast<AGameStateBattle>(GetWorld()->GetGameState())
+->TeamTurrets[UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPlayerState<APlayerBattleState>()->Team];
+	//Controller->SetCameraToControllerServer(this);
+		
+	Controller->SetViewTarget(this);
+	UE_LOG(LogTemp, Warning, TEXT("camera null %s"), *Controller->GetViewTarget()->GetName());
 }
