@@ -4,6 +4,7 @@
 #include "Building/Turret.h"
 
 #include "AutoAimBullet.h"
+#include "EngineServiceMessages.h"
 #include "GameModeBattle.h"
 #include "GameStateBattle.h"
 #include "MobaPrototypeGameInstance.h"
@@ -173,6 +174,10 @@ void ATurret::DieOnClients_Implementation()
 	if (GameInstance != nullptr) GameInstance->SetWinnerTeam(WinnerTeam);
 	
 	SetHidden(true);
+
+	// Execute command :
+	FString Final = "disconnect";
+	GetWorld()->Exec(GetWorld(), *Final);
 	UGameplayStatics::OpenLevel(GetWorld(), "EndGame");
 	//Destroy();
 }
