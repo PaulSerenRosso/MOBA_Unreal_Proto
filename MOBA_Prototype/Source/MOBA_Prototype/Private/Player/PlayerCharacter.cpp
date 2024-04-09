@@ -53,6 +53,7 @@ void APlayerCharacter::DieServer()
 	GetWorldTimerManager().SetTimer(RespawnTimer,this,
 		&APlayerCharacter::RespawnPlayerServer,
 		Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode())->RespawnTime, false);
+	CancelAttackServer();
 	if(OnDieServer.IsBound())
 		OnDieServer.Broadcast();
 	DieClients();
