@@ -160,6 +160,10 @@ void ATurret::SpawnBulletsOnClients(FVector TargetLocation, FHitData* HitData, I
 	Bullet->Init(Target, HitData);
 }
 
+void ATurret::MoveToEndGame_Implementation()
+{
+}
+
 void ATurret::UpdateHealthClients_Implementation(const int InHealth)
 {
 	CurrentHealth = InHealth;
@@ -176,9 +180,10 @@ void ATurret::DieOnClients_Implementation()
 	SetHidden(true);
 
 	// Execute command :
-	FString Final = "disconnect";
-	GetWorld()->Exec(GetWorld(), *Final);
-	UGameplayStatics::OpenLevel(GetWorld(), "EndGame");
+	// FString Final = "disconnect";
+	// GetWorld()->Exec(GetWorld(), *Final);
+	// UGameplayStatics::OpenLevel(GetWorld(), "EndGame");
+	MoveToEndGame();
 	//Destroy();
 }
 

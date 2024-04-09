@@ -88,4 +88,7 @@ public:
 	virtual void UpdateHealthClients(int InHealth);
 
 	virtual void SpawnBulletsOnClients(FVector TargetLocation, FHitData* HitData, IHitable* Target);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void MoveToEndGame();
 };
