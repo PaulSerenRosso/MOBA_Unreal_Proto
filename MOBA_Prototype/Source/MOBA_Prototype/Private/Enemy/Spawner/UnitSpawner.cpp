@@ -2,6 +2,8 @@
 
 #include "Enemy/Spawner/UnitSpawner.h"
 
+#include "Enemy/EnemyBase.h"
+
 // Sets default values
 AUnitSpawner::AUnitSpawner()
 {
@@ -47,7 +49,7 @@ void AUnitSpawner::SpawnUnit(const FUnitToSpawn& UnitDetails) const
 {
 	if (!HasAuthority()) return;
 	if (!Enabled) return;
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Spawning unit of type %d"), UnitDetails.UnitType));
+	
 
 	if (UnitDetails.UnitClass == nullptr)
 	{
@@ -58,21 +60,6 @@ void AUnitSpawner::SpawnUnit(const FUnitToSpawn& UnitDetails) const
 	AEnemyBase* NewUnit = GetWorld()->SpawnActor<AEnemyBase>(UnitDetails.UnitClass, SpawnPoint->GetComponentLocation(), GetActorRotation());
 	NewUnit->SetActorScale3D(UnitScale);
 	NewUnit->SetTeam(Team);
-
-	// FString Str = "Spawned unit: " + NewUnit->GetName();
-	// switch (Team)
-	// {
-	// case ETeam::Neutral:
-	// 	Str += " Neutral";
-	// 	break;
-	// case ETeam::Team1:
-	// 	Str += " Team1";
-	// 	break;
-	// case ETeam::Team2:
-	// 	Str += " Team2";
-	// 	break;
-	// }
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
 }
 
 // Called every frame

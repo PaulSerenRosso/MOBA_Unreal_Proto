@@ -1,14 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Building/Turret.h"
-
 #include "AutoAimBullet.h"
-#include "EngineServiceMessages.h"
-#include "GameModeBattle.h"
 #include "GameStateBattle.h"
 #include "MobaPrototypeGameInstance.h"
-#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerBattleController.h"
 
@@ -53,15 +47,6 @@ void ATurret::AddHittableTarget(AActor* Target)
 
 	if (const ETeam Team = Hittable->GetTeam(); Team == ETeam::Neutral || Team == OwnTeam) return;
 	if (HittableTargets.Contains(Hittable)) return;
-
-	// auto Player = Cast<APlayerCharacter>(Target);
-	// if (Player != nullptr)
-	// {
-	// 	if (Player->IsPlayerDead())
-	// 	{
-	// 		return;
-	// 	}
-	// }
 	
 	HittableTargets.Add(Hittable);
 
@@ -76,7 +61,6 @@ void ATurret::AddHittableTarget(AActor* Target)
 
 void ATurret::Attack()
 {
-	//if (Activated) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Attacking")));
 	if (HittableTargets.Num() == 0)
 	{
 		IsAttacking = false;
@@ -105,7 +89,6 @@ void ATurret::Attack()
 	HitData->Damage = TurretInfo->Damage;
 	HitData->HitBy = this;
 	HitData->InstigatorTeam = OwnTeam;
-	//if (Activated) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Turret %s is attacking %s"), *GetName(), *Cast<AActor>(Target)->GetName()));
 
 	if (Activated)
 	{
@@ -197,13 +180,7 @@ void ATurret::DieOnClients_Implementation()
 	if (GameInstance != nullptr) GameInstance->SetWinnerTeam(WinnerTeam);
 	
 	SetHidden(true);
-
-	// Execute command :
-	// FString Final = "disconnect";
-	// GetWorld()->Exec(GetWorld(), *Final);
-	// UGameplayStatics::OpenLevel(GetWorld(), "EndGame");
 	MoveToEndGame();
-	//Destroy();
 }
 
 AAutoAimBullet* ATurret::SpawnBullet_Implementation(FVector TargetLocation)

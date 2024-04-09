@@ -22,7 +22,6 @@ void APlayerTeamSpawner::BeginPlay()
 	if (GameState == nullptr) return;
 	const auto GameStateBattle = Cast<AGameStateBattle>(GameState);
 	if (GameStateBattle == nullptr) return;
-	UE_LOG(LogTemp, Warning, TEXT("Add spawner to gamemode"));
 	GameStateBattle->AddPlayerTeamSpawner(this, Team);
 	
 }

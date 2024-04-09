@@ -37,7 +37,6 @@ void AAutoAimBullet::Ray(float Distance)
 	CollisionParams.AddIgnoredActor(this);
 	
 	bool bHit = GetWorld()->LineTraceSingleByChannel(ActorHitData, Start, End, ECC_Pawn, CollisionParams);
-	//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 0.1f, 0, 10.0f);
 
 	if (!bHit) return;
 
@@ -51,11 +50,8 @@ void AAutoAimBullet::Ray(float Distance)
 
 	if (HitTarget->GetTeam() == HitData->InstigatorTeam) return;
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("BULLET : Hit a HitTarget")));
 	HitTarget->OnHit(*HitData);
 
-	// auto Str = "Hit target: " + HitActor->GetName();
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
 	DestroyOnServer();
 }
 
@@ -73,10 +69,10 @@ void AAutoAimBullet::DestroyOnClient_Implementation()
 void AAutoAimBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (Target == nullptr || HitData == nullptr) return;
-	const auto TargetActor = Cast<AActor>(Target);
-	if (TargetActor == nullptr) return;
+	if (!TargetActor.IsValid() || TargetActor == nullptr) {
+		Destroy();
+		return;
+	}
 	
 	const FVector TargetLocation = TargetActor->GetActorLocation();
 	FVector Direction = TargetLocation - GetActorLocation();
@@ -100,6 +96,7 @@ void AAutoAimBullet::Init(IHitable* Trget, FHitData* Hit, const float Spd)
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Bullet Init")));
 	
 	Target = Trget;
+	TargetActor = Cast<AActor>(Target);
 	HitData = Hit;
 	Speed = Spd;
 }

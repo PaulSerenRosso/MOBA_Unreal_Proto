@@ -124,7 +124,6 @@ void APlayerCharacter::OnHit(FHitData HitData)
 {
 	if(IsDead) return;
 	UpdateHealthClients(CurrentHealth-HitData.Damage);
-	UE_LOG(LogTemp, Warning, TEXT("hit by %s the target is %s"), *HitData.HitBy->GetName(), *GetName());
 	if(CurrentHealth <= 0)
 	{
 		DieServer();

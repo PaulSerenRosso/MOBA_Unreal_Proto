@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Enums.h"
-#include "Enemy/EnemyBase.h"
 #include "GameFramework/Actor.h"
 #include "UnitSpawner.generated.h"
 

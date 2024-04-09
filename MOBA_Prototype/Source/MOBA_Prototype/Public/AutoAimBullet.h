@@ -17,7 +17,10 @@ public:
 	AAutoAimBullet();
 
 protected:
+	
 	IHitable* Target;
+	UPROPERTY()
+	TWeakObjectPtr<AActor> TargetActor;
 	FHitData* HitData;
 	float Speed = 600.0f;
 	

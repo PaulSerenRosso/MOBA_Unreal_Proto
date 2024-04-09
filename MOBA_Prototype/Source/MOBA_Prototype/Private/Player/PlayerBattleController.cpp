@@ -4,7 +4,6 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "MobaPrototypeGameInstance.h"
-#include "Blueprint/UserWidget.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/PlayerCharacter.h"
 
@@ -20,14 +19,11 @@ void APlayerBattleController::BeginPlay()
 
 void APlayerBattleController::AttackInput(const FInputActionValue& ActionValue)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Je test l'attack"));
-	
 	CurrentBattleCharacter->AttackServer();
 }
 
 void APlayerBattleController::CancelAttackInput(const FInputActionValue& ActionValue)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Je test le cancel"));
 	CurrentBattleCharacter->CancelAttackServer();
 }
 
@@ -49,7 +45,6 @@ void APlayerBattleController::SetupInputComponent()
 void APlayerBattleController::OnRep_Pawn()
 {
 	Super::OnRep_Pawn();
-//	UE_LOG(LogTemp, Warning, TEXT("TEST"));
 	UpdateBattleCharacter();
 }
 
@@ -82,8 +77,6 @@ bool APlayerBattleController::GetDirectionFromCharacterPositionToMousePosition(F
 		if (!DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
 			return false;
 	FVector PawnLocation = CurrentPawn->GetActorLocation();
-	//UE_LOG(LogTemp, Warning, TEXT("Mouse Position X: %f  Y: %f PlayerPosition : X: %f  Y: %f "), WorldLocation.X, WorldLocation.Y,  PawnLocation.X, PawnLocation.Y);
-	
 		Direction.X = WorldLocation.X - PawnLocation.X;
 		Direction.Y = WorldLocation.Y - PawnLocation.Y;
 		Direction.Normalize();
@@ -146,8 +139,6 @@ void APlayerBattleController::UpdateBattleCharacter()
 	OldPawn = CurrentBattleCharacter;
 	if(CurrentBattleCharacter)
 	{
-		
-		UE_LOG(LogTemp, Warning, TEXT("AddInput"));
 		AddBattleInputMapping();
 		OnActivateBattleCharacterClientOwner();
 	

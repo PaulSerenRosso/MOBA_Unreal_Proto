@@ -9,7 +9,6 @@
 #include "GameFramework/Actor.h"
 #include "Interfaces/Healthable.h"
 #include "Interfaces/Hitable.h"
-#include "Interfaces/PlayerJoin.h"
 #include "Turret.generated.h"
 
 UCLASS()

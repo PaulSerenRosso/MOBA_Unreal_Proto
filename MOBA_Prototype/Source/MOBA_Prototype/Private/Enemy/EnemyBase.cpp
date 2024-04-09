@@ -2,7 +2,6 @@
 
 
 #include "Enemy/EnemyBase.h"
-
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -59,10 +58,6 @@ void AEnemyBase::TryAttack(AActor* Target)
 	auto mult = Cast<AEnemyBase>(Target) == nullptr ? 1 : 0.5;
 
 	Hittable->OnHit(FHitData( EnemyAttackInfo->Damage * mult, this, Team ));
-
-	
-	//auto Str = "Attacked target: " + Target->GetName();
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"), *FString(Str)));
 	
 	CanAttack = false;
 	CallbackCanAttack(false);

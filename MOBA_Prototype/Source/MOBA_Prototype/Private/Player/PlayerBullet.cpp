@@ -2,9 +2,7 @@
 
 
 #include "Player/PlayerBullet.h"
-
 #include "Helpers.h"
-
 #include "Interfaces/Hitable.h"
 #include "Net/UnrealNetwork.h"
 
@@ -36,10 +34,7 @@ void APlayerBullet::DestroyBullet()
 void APlayerBullet::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
-	UE_LOG(LogTemp, Warning, TEXT("overlap"));
 	if(!HasAuthority()) return;
-	UE_LOG(LogTemp, Warning, TEXT("hasauthority %s"), *OtherActor->GetName());
-
 	IHitable* Hitable = Cast<IHitable>(OtherActor);
 	if(Hitable != nullptr)
 	{
@@ -49,13 +44,8 @@ void APlayerBullet::NotifyActorBeginOverlap(AActor* OtherActor)
 			HitData.Damage = Damage;
 			HitData.HitBy = this;
 			Hitable->OnHit(FHitData(HitData));
-			UE_LOG(LogTemp, Warning, TEXT("enemy team"));
 			GetWorldTimerManager().ClearTimer(DestructionTimerHandle);
 			DestroyBullet();
-		}
-		else
-		{
-				UE_LOG(LogTemp, Warning, TEXT("same team"));
 		}
 	}
 	
@@ -66,7 +56,6 @@ void APlayerBullet::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimi
 	bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-	UE_LOG(LogTemp, Warning, TEXT("hit notify"));
 	GetWorldTimerManager().ClearTimer(DestructionTimerHandle);
 	DestroyBullet();
 }
@@ -75,7 +64,6 @@ void APlayerBullet::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimi
 void APlayerBullet::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ChampionData.h"
 #include "Enums.h"
 #include "Engine/GameInstance.h"
 #include "MobaPrototypeGameInstance.generated.h"
