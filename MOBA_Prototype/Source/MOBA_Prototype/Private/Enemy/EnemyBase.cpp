@@ -15,6 +15,7 @@ void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
 	CurrentHealth = MaxHealth;
+
 	Execute_CallbackUpdateHealth(this);
 	CallbackCanAttack(true);
 }
@@ -29,6 +30,7 @@ void AEnemyBase::SetTeam(const ETeam NewTeam)
 {
 	Team = NewTeam;
 	ChangedTeam();
+	Execute_CallbackUpdateHealth(this);
 }
 
 // Called every frame
