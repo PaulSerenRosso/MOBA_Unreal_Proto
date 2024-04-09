@@ -84,16 +84,10 @@ void ATurret::Attack()
 			return;
 		}
 	}
-	
-	FHitData* HitData = new FHitData();
-	HitData->Damage = TurretInfo->Damage;
-	HitData->HitBy = this;
-	HitData->InstigatorTeam = OwnTeam;
-
 	if (Activated)
 	{
 		const auto Location = GetActorLocation() + FVector(0, 0, 500);
-		SpawnBulletsOnClients(Location, HitData, Target);
+		SpawnBulletsServer(Location, TurretInfo->Damage, Target);
 	}
 	
 	GetWorldTimerManager().SetTimer(AttackTimer, this, &ATurret::Attack, TurretInfo->AttackCooldown);
@@ -156,11 +150,14 @@ void ATurret::DieOnServer()
 	DieOnClients();
 }
 
-void ATurret::SpawnBulletsOnClients(FVector TargetLocation, FHitData* HitData, IHitable* Target)
+void ATurret::SpawnBulletsServer_Implementation(FVector TargetLocation, int Damage, IHitable* Target)
 {
+	FHitData* HitData = new FHitData(Damage, this, OwnTeam);
 	const auto Bullet = SpawnBullet(TargetLocation);
-	Bullet->Init(Target, HitData);
+     	Bullet->Init(Target, HitData);
 }
+
+
 
 void ATurret::MoveToEndGame_Implementation()
 {

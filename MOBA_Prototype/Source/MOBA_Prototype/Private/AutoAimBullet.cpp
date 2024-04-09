@@ -68,6 +68,7 @@ void AAutoAimBullet::DestroyOnClient_Implementation()
 // Called every frame
 void AAutoAimBullet::Tick(float DeltaTime)
 {
+	if(!HasAuthority()) return;
 	Super::Tick(DeltaTime);
 	if (!TargetActor.IsValid() || TargetActor == nullptr) {
 		Destroy();
@@ -87,6 +88,7 @@ void AAutoAimBullet::Tick(float DeltaTime)
 
 void AAutoAimBullet::Init(IHitable* Trget, FHitData* Hit, const float Spd)
 {
+	if(!HasAuthority()) return;
 	if (Trget == nullptr || Hit == nullptr)
 	{
 		Destroy();

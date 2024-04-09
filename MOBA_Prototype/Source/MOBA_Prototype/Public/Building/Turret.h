@@ -83,8 +83,8 @@ public:
 	
 	UFUNCTION(NetMulticast,Reliable)
 	virtual void UpdateHealthClients(int InHealth);
-
-	virtual void SpawnBulletsOnClients(FVector TargetLocation, FHitData* HitData, IHitable* Target);
+	UFUNCTION(Server, Reliable)
+	virtual void SpawnBulletsServer(FVector TargetLocation, int Damage, IHitable* Target);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void MoveToEndGame();
