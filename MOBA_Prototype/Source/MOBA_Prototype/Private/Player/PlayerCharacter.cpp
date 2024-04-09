@@ -2,6 +2,7 @@
 #include "Player/PlayerCharacter.h"
 #include "GameModeBattle.h"
 #include "GameStateBattle.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerBattleState.h"
 
@@ -26,6 +27,17 @@ void APlayerCharacter::BeginPlay()
 	UpdateHealthClients(GetMaxHealth());
 	SkeletalMesh = Cast<USkeletalMeshComponent>(GetComponentByClass(USkeletalMeshComponent::StaticClass()));
 	HealthWidget = Cast<UHealthWidgetComponent>(GetComponentByClass(UHealthWidgetComponent::StaticClass()));
+	
+	// Don't rotate character to camera direction
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	// Configure character movement
+	GetCharacterMovement()->bOrientRotationToMovement = false; 
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 0, 0.f);
+	GetCharacterMovement()->bConstrainToPlane = true;
+	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 }
 
 // Called every frame
@@ -42,7 +54,7 @@ void APlayerCharacter::DieServer()
 		&APlayerCharacter::RespawnPlayerServer,
 		Cast<AGameModeBattle>(GetWorld()->GetAuthGameMode())->RespawnTime, false);
 	if(OnDieServer.IsBound())
-		OnDieServer.Execute();
+		OnDieServer.Broadcast();
 	DieClients();
 }
 
@@ -51,7 +63,7 @@ void APlayerCharacter::RespawnPlayerServer()
 	IsDie = false;
 	SetActorLocation(TeamSpawner->GetActorLocation());
 	if(OnRespawnServer.IsBound())
-		OnRespawnServer.Execute();
+		OnRespawnServer.Broadcast();
 	UpdateHealthClients(GetMaxHealth());
 	RespawnPlayerClients();
 }

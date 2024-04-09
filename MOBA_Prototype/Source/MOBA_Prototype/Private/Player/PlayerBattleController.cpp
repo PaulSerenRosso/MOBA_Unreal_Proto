@@ -121,7 +121,19 @@ void APlayerBattleController::TryCreateChampionCharacter()
 }
 
 
+void APlayerBattleController::RemoveInputMap_Implementation()
+{
+	RemoveBattleInputMapping();
+	OnDeactivateBattleCharacterClientOwner();
+	OnRemoveInputMapOwnerClient.Broadcast();
+}
 
+void APlayerBattleController::AddInputMap_Implementation()
+{
+	AddBattleInputMapping();
+	OnActivateBattleCharacterClientOwner();
+	OnAddInputMapOwnerClient.Broadcast();
+}
 
 void APlayerBattleController::UpdateBattleCharacter()
 {
@@ -130,7 +142,7 @@ void APlayerBattleController::UpdateBattleCharacter()
 	{	
 	if(CurrentBattleCharacter == OldPawn) return;
 	if(OnPawnChangedOwnerClient.IsBound())
-	OnPawnChangedOwnerClient.Execute((CurrentBattleCharacter));
+	OnPawnChangedOwnerClient.Broadcast((CurrentBattleCharacter));
 	OldPawn = CurrentBattleCharacter;
 	if(CurrentBattleCharacter)
 	{
@@ -140,14 +152,8 @@ void APlayerBattleController::UpdateBattleCharacter()
 		OnActivateBattleCharacterClientOwner();
 	
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("RemoveBattle"));
-		RemoveBattleInputMapping();
-		OnDeactivateBattleCharacterClientOwner();
-	}
-			
-		};
+	
+	};
 }
 
 
@@ -172,11 +178,9 @@ void APlayerBattleController::RemoveBattleInputMapping()
 
 void APlayerBattleController::SpawnPlayerChampionCharacterServer_Implementation(UClass* currentChampionClass)
 {
-
-	UnPossess();
 	BattleCharacter = GetWorld()->SpawnActor<APlayerCharacter>(currentChampionClass,FVector(UKismetMathLibrary::RandomFloat()*100+1000.000000,1810.000000,92.012604), FRotator::ZeroRotator );
-	BattleCharacter->OnDieServer.BindUFunction(this, "UnPossessBattleCharacterServer");
-	BattleCharacter->OnRespawnServer.BindUFunction(this, "PossessBattleCharacterServer");
+	BattleCharacter->OnDieServer.AddUFunction(this, "UnPossessBattleCharacterServer");
+	BattleCharacter->OnRespawnServer.AddUFunction(this, "PossessBattleCharacterServer");
 	Possess(BattleCharacter);
 	UpdateBattleCharacter();
 	CurrentBattleCharacter->OnSpawnedServer();
@@ -184,16 +188,12 @@ void APlayerBattleController::SpawnPlayerChampionCharacterServer_Implementation(
 
 void APlayerBattleController::UnPossessBattleCharacterServer()
 {
-	UnPossess();
-	Possess(SpectatorPawn);
-	UpdateBattleCharacter();
+	RemoveInputMap();
 }
 
 void APlayerBattleController::PossessBattleCharacterServer()
 {
-	UnPossess();
-	Possess(BattleCharacter);
-	UpdateBattleCharacter();
+	AddInputMap();
 }
 
 

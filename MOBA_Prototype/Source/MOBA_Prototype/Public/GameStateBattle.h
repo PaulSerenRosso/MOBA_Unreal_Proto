@@ -17,6 +17,7 @@ class MOBA_PROTOTYPE_API AGameStateBattle : public AGameStateBase
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "TeamMaterials")
 	TMap<ETeam, UMaterial*> TeamMaterials;
+	
 	TMap<ETeam, ATurret*> TeamTurrets;
 	TMap<ETeam, APlayerTeamSpawner*> PlayerTeamSpawners;
 	void AddPlayerTeamSpawner(APlayerTeamSpawner* PlayerSpawner, ETeam Team);
