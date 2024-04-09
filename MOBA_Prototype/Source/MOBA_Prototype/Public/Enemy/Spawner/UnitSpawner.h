@@ -17,7 +17,7 @@ struct FUnitToSpawn
 	ECustomUnitType UnitType;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSoftClassPtr<AEnemyBase> UnitClass;
+	UClass* UnitClass;
 };
 
 UCLASS()

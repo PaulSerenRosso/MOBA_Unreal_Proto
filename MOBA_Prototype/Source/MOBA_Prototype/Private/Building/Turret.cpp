@@ -54,14 +54,14 @@ void ATurret::AddHittableTarget(AActor* Target)
 	if (const ETeam Team = Hittable->GetTeam(); Team == ETeam::Neutral || Team == OwnTeam) return;
 	if (HittableTargets.Contains(Hittable)) return;
 
-	auto Player = Cast<APlayerCharacter>(Target);
-	if (Player != nullptr)
-	{
-		if (Player->IsPlayerDead())
-		{
-			return;
-		}
-	}
+	// auto Player = Cast<APlayerCharacter>(Target);
+	// if (Player != nullptr)
+	// {
+	// 	if (Player->IsPlayerDead())
+	// 	{
+	// 		return;
+	// 	}
+	// }
 	
 	HittableTargets.Add(Hittable);
 
