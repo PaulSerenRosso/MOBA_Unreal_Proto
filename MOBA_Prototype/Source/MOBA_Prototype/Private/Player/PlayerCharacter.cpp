@@ -2,6 +2,7 @@
 #include "Player/PlayerCharacter.h"
 #include "GameModeBattle.h"
 #include "GameStateBattle.h"
+#include "Helpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerBattleState.h"
@@ -18,12 +19,10 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	for (auto Component : GetComponentsByInterface(UPlayerAttackable::StaticClass()))
-	{
-		IPlayerAttackable* InteractableComponent = Cast<IPlayerAttackable>(Component);
-		PlayerAttackables.Add(InteractableComponent);
+		IPlayerAttackable* InteractableComponent = Cast<IPlayerAttackable>(GetComponentsByInterface(UPlayerAttackable::StaticClass())[0]);
+		PlayerAttackable = (InteractableComponent);
 		InteractableComponent->SetUp(this);
-	}
+		ShootDamage = PlayerAttackable->GetDamage();
 	UpdateHealthClients(GetMaxHealth());
 	SkeletalMesh = Cast<USkeletalMeshComponent>(GetComponentByClass(USkeletalMeshComponent::StaticClass()));
 	HealthWidget = Cast<UHealthWidgetComponent>(GetComponentByClass(UHealthWidgetComponent::StaticClass()));
@@ -40,6 +39,8 @@ void APlayerCharacter::BeginPlay()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 	HealthWidget->UpdateUI(Team);
+	GetCharacterMovement()->MaxWalkSpeed = ChampionData->MaxSpeed;
+	
 }
 
 // Called every frame
@@ -95,6 +96,34 @@ void APlayerCharacter::SetTeamClients_Implementation(ETeam InTeam)
 	Team = InTeam;
 	HealthWidget->UpdateUI(Team);
 	
+}
+
+void APlayerCharacter::SetPlayerBattleStateClients_Implementation(APlayerBattleState* InPlayerBattleState)
+{
+	if(InPlayerBattleState != nullptr)
+	{
+		PlayerBattleState = InPlayerBattleState;
+		PlayerBattleState->OnUpdatePlayerStatClients.AddUFunction(this, "UpdateMaxSpeed");
+		PlayerBattleState->OnUpdatePlayerStatClients.AddUFunction(this, "UpdateMaxHealth");
+	}
+}
+
+
+
+void APlayerCharacter::UpdateMaxSpeed(const EPlayerStatType Type)
+{
+	if(Type == EPlayerStatType::MoveSpeed)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = ChampionData->MaxSpeed*PlayerBattleState->GetStatValue(EPlayerStatType::MoveSpeed);
+	}
+}
+
+void APlayerCharacter::UpdateMaxHealth(EPlayerStatType Type)
+{
+	if(Type == EPlayerStatType::MaxHealth)
+	{
+		Execute_CallbackUpdateHealth(this);
+	}
 }
 
 void APlayerCharacter::Move(FVector2D Direction)
@@ -166,9 +195,12 @@ void APlayerCharacter::OnSpawnedServer()
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team : %s"), *TeamSpawner->GetName());
+
+	
 	SetTeamClients(PlayerBattleState->Team);
 	
 	SetActorLocation(TeamSpawner->GetActorLocation());
+	SetPlayerBattleStateClients(PlayerBattleState);
 		
 }
 
@@ -179,7 +211,7 @@ int APlayerCharacter::GetHealth()
 
 int APlayerCharacter::GetMaxHealth()
 {
-	return ChampionData->MaxHealth;
+	return PlayerBattleState == nullptr ? ChampionData->MaxHealth :ChampionData->MaxHealth*PlayerBattleState->GetStatValue(EPlayerStatType::MaxHealth);
 }
 
 float APlayerCharacter::GetPercentageHealth()
@@ -187,26 +219,26 @@ float APlayerCharacter::GetPercentageHealth()
 	return static_cast<float>(GetHealth())/static_cast<float>(GetMaxHealth());
 }
 
+float APlayerCharacter::GetPlayerStatValue(EPlayerStatType PlayerStatType)
+{
+	return PlayerBattleState->GetStatValue(PlayerStatType);
+}
+
 bool APlayerCharacter::IsPlayerDead() const
 {
 	return IsDead;
 }
 
-
 void APlayerCharacter::CancelAttackServer_Implementation()
 {
-	for (auto Attackable : PlayerAttackables)
-	{
-		Attackable->OnCancelAttackServer();
-	}
+	
+		PlayerAttackable->OnCancelAttackServer();
+	
 }
 
 void APlayerCharacter::AttackServer_Implementation()
 {
-	for (auto Attackable : PlayerAttackables)
-	{
-		Attackable->OnAttackServer();
-	}
+	PlayerAttackable->OnAttackServer();
 }
 
 

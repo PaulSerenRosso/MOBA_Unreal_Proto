@@ -3,18 +3,23 @@
 #include "Player/PlayerBattleController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Helpers.h"
 #include "MobaPrototypeGameInstance.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Player/PlayerBattleHud.h"
 #include "Player/PlayerCharacter.h"
 
 class UEnhancedInputLocalPlayerSubsystem;
 
 void APlayerBattleController::BeginPlay()
 {
-	
 	Super::BeginPlay();
 	SpectatorPawn= GetPawn();
+	OnPawnChangedOwnerClient.AddUFunction(this, "SetPawnHud");
 	TryCreateChampionCharacter();
+
+	OnPlayerStateReplicated.AddUFunction(this, "SetPlayerStateHud");
+	OnPawnReplicated.AddUFunction(this, "SetPawnHud");
 }
 
 void APlayerBattleController::AttackInput(const FInputActionValue& ActionValue)
@@ -46,6 +51,7 @@ void APlayerBattleController::OnRep_Pawn()
 {
 	Super::OnRep_Pawn();
 	UpdateBattleCharacter();
+	OnPawnReplicated.Broadcast(GetPawn());
 }
 
 void APlayerBattleController::Tick(float DeltaSeconds)
@@ -113,6 +119,14 @@ void APlayerBattleController::TryCreateChampionCharacter()
 	}
 }
 
+void APlayerBattleController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	const auto State = GetPlayerState<APlayerBattleState>();
+
+	OnPlayerStateReplicated.Broadcast(State);
+}
+
 
 void APlayerBattleController::RemoveInputMap_Implementation()
 {
@@ -128,22 +142,34 @@ void APlayerBattleController::AddInputMap_Implementation()
 	OnAddInputMapOwnerClient.Broadcast();
 }
 
+
+
+void APlayerBattleController::SetPawnHud(APawn* InPawn)
+{
+	if(CheckOwningClient())
+	Cast<APlayerBattleHud>(GetHUD())->SetPawn(InPawn);
+}
+
+void APlayerBattleController::SetPlayerStateHud(APlayerBattleState* InPlayerState)
+{
+	if(CheckOwningClient())
+		Cast<APlayerBattleHud>(GetHUD())->SetPlayerState(InPlayerState);
+}
+
 void APlayerBattleController::UpdateBattleCharacter()
 {
 	CurrentBattleCharacter = Cast<APlayerCharacter>(GetPawn());
 	if(CheckOwningClient())
 	{	
-	if(CurrentBattleCharacter == OldPawn) return;
-	if(OnPawnChangedOwnerClient.IsBound())
-	OnPawnChangedOwnerClient.Broadcast((CurrentBattleCharacter));
-	OldPawn = CurrentBattleCharacter;
-	if(CurrentBattleCharacter)
-	{
+		if(CurrentBattleCharacter == OldPawn) return;
+		
+		if(OnPawnChangedOwnerClient.IsBound()) OnPawnChangedOwnerClient.Broadcast((CurrentBattleCharacter));
+
+		OldPawn = CurrentBattleCharacter;
+		if(CurrentBattleCharacter == nullptr) return;
+
 		AddBattleInputMapping();
 		OnActivateBattleCharacterClientOwner();
-	
-	}
-	
 	};
 }
 
@@ -173,6 +199,8 @@ void APlayerBattleController::SpawnPlayerChampionCharacterServer_Implementation(
 	BattleCharacter->OnDieServer.AddUFunction(this, "UnPossessBattleCharacterServer");
 	BattleCharacter->OnRespawnServer.AddUFunction(this, "PossessBattleCharacterServer");
 	Possess(BattleCharacter);
+	SetPawnHud(BattleCharacter);
+	SetPlayerStateHud(GetPlayerState<APlayerBattleState>());
 	UpdateBattleCharacter();
 	CurrentBattleCharacter->OnSpawnedServer();
 }

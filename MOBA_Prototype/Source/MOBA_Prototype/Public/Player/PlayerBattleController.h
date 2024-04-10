@@ -12,6 +12,9 @@
  * 
  */
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPawnChanged, APawn*);
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStateReplicated, APlayerState*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPawnReplicated, APawn*);
 DECLARE_MULTICAST_DELEGATE(FOnRemoveInputMap);
 DECLARE_MULTICAST_DELEGATE(FOnAddInputMap);
 UCLASS()
@@ -27,6 +30,9 @@ public:
 	FOnAddInputMap OnAddInputMapOwnerClient;
 	UFUNCTION(NetMulticast, Reliable)
 	void SetCameraToControllerServer(AActor* Camera);
+
+	FOnPlayerStateReplicated OnPlayerStateReplicated;
+	FOnPawnReplicated OnPawnReplicated;
 	
 private:
 	
@@ -57,6 +63,9 @@ protected:
 	bool CheckOwningClient();
 	UFUNCTION(BlueprintCallable)
 	void TryCreateChampionCharacter();
+
+	void OnRep_PlayerState() override;
+	
 	UFUNCTION(Server, Reliable)
 	void SpawnPlayerChampionCharacterServer(UClass* currentChampionClass);
 	virtual void BeginPlay() override;
@@ -76,4 +85,8 @@ void OnDeactivateBattleCharacterClientOwner();
 	UFUNCTION(BlueprintCallable)
 	void PossessBattleCharacterServer();
 	
+	UFUNCTION(BlueprintCallable)
+	void SetPawnHud(APawn* InPawn);
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerStateHud(APlayerBattleState* InPlayerState);
 };
