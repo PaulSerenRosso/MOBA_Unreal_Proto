@@ -18,7 +18,7 @@ public:
 	APlayerStatsUpgrader();
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPlayerStatsUpgraderInfo* PlayerStatsUpgraderInfo;
 	UPROPERTY(EditAnywhere)
 	ETeam Team;

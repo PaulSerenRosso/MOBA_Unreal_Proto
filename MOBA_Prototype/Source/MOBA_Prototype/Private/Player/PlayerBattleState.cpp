@@ -35,7 +35,7 @@ float APlayerBattleState::GetStatValue(EPlayerStatType Type)
 void APlayerBattleState::IncreaseStatValueClients_Implementation(EPlayerStatType Type, float Amount)
 {
 	PlayerStats[Type] += Amount;
-	OnUpdatePlayerStatClients.Broadcast(Type);
+	OnUpdatePlayerStatClients.Broadcast(Type, PlayerStats[Type]);
 }
 
 void APlayerBattleState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {

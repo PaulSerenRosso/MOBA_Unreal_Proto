@@ -107,7 +107,7 @@ void APlayerCharacter::SetPlayerBattleStateClients_Implementation(APlayerBattleS
 
 
 
-void APlayerCharacter::UpdateMaxSpeed(const EPlayerStatType Type)
+void APlayerCharacter::UpdateMaxSpeed(const EPlayerStatType Type, float Amount)
 {
 	if(Type == EPlayerStatType::MoveSpeed)
 	{
@@ -115,12 +115,19 @@ void APlayerCharacter::UpdateMaxSpeed(const EPlayerStatType Type)
 	}
 }
 
-void APlayerCharacter::UpdateMaxHealth(EPlayerStatType Type)
+void APlayerCharacter::UpdateMaxHealth(EPlayerStatType Type, float Amount)
 {
 	if(Type == EPlayerStatType::MaxHealth)
 	{
+		UpdateMaxHealthClients(Amount);
 		Execute_CallbackUpdateHealth(this);
 	}
+}
+
+void APlayerCharacter::UpdateMaxHealthClients_Implementation(float NewAmount)
+{
+	LocalMaxHealthAmount = NewAmount;
+	Execute_CallbackUpdateHealth(this);
 }
 
 void APlayerCharacter::Move(FVector2D Direction)
@@ -208,7 +215,7 @@ int APlayerCharacter::GetHealth()
 
 int APlayerCharacter::GetMaxHealth()
 {
-	return PlayerBattleState == nullptr ? ChampionData->MaxHealth :ChampionData->MaxHealth*PlayerBattleState->GetStatValue(EPlayerStatType::MaxHealth);
+	return ChampionData->MaxHealth  * (PlayerBattleState == nullptr ? LocalMaxHealthAmount : PlayerBattleState->GetStatValue(EPlayerStatType::MaxHealth));
 }
 
 float APlayerCharacter::GetPercentageHealth()
@@ -216,9 +223,9 @@ float APlayerCharacter::GetPercentageHealth()
 	return static_cast<float>(GetHealth())/static_cast<float>(GetMaxHealth());
 }
 
-float APlayerCharacter::GetPlayerStatValue(EPlayerStatType PlayerStatType)
+float APlayerCharacter::GetPlayerStatValue(const EPlayerStatType PlayerStat)
 {
-	return PlayerBattleState->GetStatValue(PlayerStatType);
+	return PlayerBattleState->GetStatValue(PlayerStat);
 }
 
 bool APlayerCharacter::IsPlayerDead() const

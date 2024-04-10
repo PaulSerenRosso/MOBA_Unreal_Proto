@@ -33,7 +33,7 @@ void APlayerBattleHud::InitHud(APlayerBattleState* InPlayerBattleState)
 	InPlayerBattleState->OnUpdatePlayerStatClients.AddUFunction(this, "UpdateWidgetStats");
 }
 
-void APlayerBattleHud::UpdateWidgetStats(EPlayerStatType PlayerStatType)
+void APlayerBattleHud::UpdateWidgetStats(EPlayerStatType PlayerStatType, float Amount)
 {
 	PlayerBattleHudMainWidget->OnUpdatePlayerStatsWidget(PlayerStatType);
 }

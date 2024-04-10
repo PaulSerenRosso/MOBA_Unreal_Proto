@@ -30,5 +30,5 @@ protected:
 	UClass* WidgetClass;
 	UPlayerBattleHudMainWidget* PlayerBattleHudMainWidget;
 	UFUNCTION(BlueprintCallable)
-	void UpdateWidgetStats(EPlayerStatType PlayerStatType);
+	void UpdateWidgetStats(EPlayerStatType PlayerStatType, float Amount);
 };

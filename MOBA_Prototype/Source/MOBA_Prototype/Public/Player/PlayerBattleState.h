@@ -10,7 +10,7 @@
 /**
  * 
  */
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdatePlayerStat,EPlayerStatType);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnUpdatePlayerStat,EPlayerStatType, float);
 UCLASS()
 class MOBA_PROTOTYPE_API APlayerBattleState : public APlayerState
 {

@@ -17,6 +17,10 @@ class MOBA_PROTOTYPE_API UPlayerStatsUpgraderInfo : public UPrimaryDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 	EPlayerStatType PlayerStatType;
-	UPROPERTY(EditAnywhere)
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float UpgradeValue;
+	
+	UPROPERTY(EditAnywhere)
+	int GoldCost;
 };

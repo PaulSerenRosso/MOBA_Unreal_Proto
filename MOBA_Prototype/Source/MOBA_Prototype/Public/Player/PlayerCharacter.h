@@ -31,6 +31,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 
+	float LocalMaxHealthAmount = 1;
 
 	virtual void BeginPlay() override;
 	IPlayerAttackable* PlayerAttackable;
@@ -53,10 +54,12 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void SetPlayerBattleStateClients(APlayerBattleState* InPlayerBattleState);
 	UFUNCTION(BlueprintCallable)
-	void UpdateMaxSpeed(EPlayerStatType Type);
+	void UpdateMaxSpeed(EPlayerStatType Type, float Amount);
 	UFUNCTION(BlueprintCallable)
-	void UpdateMaxHealth(EPlayerStatType Type);
+	void UpdateMaxHealth(EPlayerStatType Type, float Amount);
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void UpdateMaxHealthClients(float NewAmount);
 
 public:
 	virtual void Move(FVector2D Direction);
