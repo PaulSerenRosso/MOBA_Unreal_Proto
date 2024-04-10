@@ -17,7 +17,7 @@ AUnit::AUnit()
 void AUnit::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	UpdateTeamColor();
 }
 
 // Called every frame
@@ -67,5 +67,10 @@ float AUnit::GetPercentageHealth()
 
 void AUnit::OnHit(FHitData HitData)
 {
+}
+
+void AUnit::ChangedTeam_Implementation()
+{
+	UpdateTeamColor();
 }
 

@@ -126,10 +126,6 @@ float AEnemyBase::GetPercentageHealth()
 	return static_cast<float>(CurrentHealth) / static_cast<float>(EnemyAttackInfo->MaxHealth);
 }
 
-void AEnemyBase::ChangedTeam_Implementation()
-{
-}
-
 void AEnemyBase::MoveCloseToTarget_Implementation(FVector Target, float AcceptanceRadius)
 {
 }

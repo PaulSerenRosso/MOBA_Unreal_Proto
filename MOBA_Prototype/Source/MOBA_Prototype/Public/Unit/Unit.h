@@ -47,4 +47,10 @@ public:
 	virtual int GetMaxHealth() override;
 	virtual float GetPercentageHealth() override;
 	virtual void OnHit(FHitData HitData) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateTeamColor();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ChangedTeam();
 };

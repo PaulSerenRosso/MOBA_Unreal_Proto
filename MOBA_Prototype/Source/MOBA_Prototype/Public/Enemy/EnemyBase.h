@@ -61,9 +61,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void MoveCloseToTarget(FVector Target, float AcceptanceRadius);
 
-	UFUNCTION(BlueprintNativeEvent)
-	void ChangedTeam();
-
 	UFUNCTION(BlueprintCallable)
 	virtual void TryAttack(AActor* Target);
 
