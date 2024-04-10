@@ -12,10 +12,11 @@
 #include "Interfaces/PlayerAttackable.h"
 #include "Interfaces/PlayerPawnComponentHandlable.h"
 #include "UI/HealthWidgetComponent.h"
+#include "Unit/Unit.h"
 #include "PlayerCharacter.generated.h"
 DECLARE_MULTICAST_DELEGATE(FOnDie);
 UCLASS()
-class MOBA_PROTOTYPE_API APlayerCharacter : public ACharacter, public IPlayerPawnComponentHandlable, public IHitable, public IHealthable
+class MOBA_PROTOTYPE_API APlayerCharacter : public AUnit, public IPlayerPawnComponentHandlable
 {
 	GENERATED_BODY()
 
@@ -41,9 +42,6 @@ protected:
 	USkeletalMeshComponent* SkeletalMesh;
 	UHealthWidgetComponent* HealthWidget;
 	FTimerHandle RespawnTimer;
-	UPROPERTY(Replicated)
-	bool IsDead = false;
-	int CurrentHealth;
 	virtual void DieServer();
 	virtual void RespawnPlayerServer();
 	UFUNCTION(NetMulticast, Reliable)
@@ -70,7 +68,7 @@ public:
 	UFUNCTION(Server, Unreliable)
 	virtual void CancelAttackServer();
 	virtual void OnHit(FHitData HitData) override;
-	UFUNCTION(BlueprintCallable, BlueprintPure) virtual ETeam GetTeam() override;
+	virtual ETeam GetTeam() override;
 	virtual void OnSpawnedServer();
 	virtual int GetHealth() override;
 	virtual int GetMaxHealth() override;

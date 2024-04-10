@@ -10,10 +10,11 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/Hitable.h"
 #include "Interfaces/Healthable.h"
+#include "Unit/Unit.h"
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class MOBA_PROTOTYPE_API AEnemyBase : public ACharacter, public IHitable, public IPlayerJoin, public IHealthable
+class MOBA_PROTOTYPE_API AEnemyBase : public AUnit, public IPlayerJoin
 {
 	GENERATED_BODY()
 	
@@ -45,9 +46,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	ETeam Team;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Meta = (ExposeOnSpawn = true))
-	int CurrentHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UEnemyAttackInfo* EnemyAttackInfo;
