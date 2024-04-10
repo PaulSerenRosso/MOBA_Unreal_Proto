@@ -26,5 +26,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float AttackCooldown;
+
+	UPROPERTY(EditAnywhere)
+	int GoldReward = 100;
 	
 };

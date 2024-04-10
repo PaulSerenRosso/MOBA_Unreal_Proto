@@ -77,9 +77,6 @@ public:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void DieOnClients();
-	
-	UFUNCTION(NetMulticast,Reliable)
-	virtual void UpdateHealthClients(int InHealth);
 
 	
 

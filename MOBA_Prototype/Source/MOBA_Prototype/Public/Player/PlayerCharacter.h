@@ -48,8 +48,6 @@ protected:
 	virtual void DieClients();
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void RespawnPlayerClients();
-	UFUNCTION(NetMulticast,Reliable)
-	virtual void UpdateHealthClients(int InHealth);
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void SetTeamClients(ETeam InTeam);
 	
@@ -76,6 +74,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsPlayerDead() const;
+	
+	UFUNCTION(Server, Unreliable)
+	virtual void GainGoldServer(int GoldGain);
+	
+	UFUNCTION(NetMulticast, Unreliable)
+	virtual void GainGoldClient(int NewGold);
 	
 
 

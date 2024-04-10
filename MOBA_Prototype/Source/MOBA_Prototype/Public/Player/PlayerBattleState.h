@@ -17,5 +17,9 @@ class MOBA_PROTOTYPE_API APlayerBattleState : public APlayerState
 public:
 	UPROPERTY(Replicated)
 	ETeam Team;
+
+	UPROPERTY(Replicated)
+	int Gold;
+	
 	void SetTeam();
 };

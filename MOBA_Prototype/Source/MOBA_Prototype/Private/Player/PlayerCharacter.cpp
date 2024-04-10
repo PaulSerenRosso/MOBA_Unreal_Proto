@@ -51,6 +51,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::DieServer()
 {
+	//TODO remove, debug til we have UI
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Golds: " + FString::FromInt(PlayerBattleState->Gold)));
+	
 	IsDead = true;
 	GetWorldTimerManager().SetTimer(RespawnTimer,this,
 		&APlayerCharacter::RespawnPlayerServer,
@@ -82,12 +85,6 @@ void APlayerCharacter::RespawnPlayerClients_Implementation()
 {
 	SkeletalMesh->SetVisibility(true);
 	HealthWidget->SetVisibility(true);
-}
-
-void APlayerCharacter::UpdateHealthClients_Implementation(int InHealth)
-{
-	CurrentHealth = InHealth;
-	Execute_CallbackUpdateHealth(this);
 }
 
 void APlayerCharacter::SetTeamClients_Implementation(ETeam InTeam)
@@ -169,7 +166,8 @@ void APlayerCharacter::OnSpawnedServer()
 	SetTeamClients(PlayerBattleState->Team);
 	
 	SetActorLocation(TeamSpawner->GetActorLocation());
-		
+
+	PlayerBattleState->Gold = 0;
 }
 
 int APlayerCharacter::GetHealth()
@@ -190,6 +188,18 @@ float APlayerCharacter::GetPercentageHealth()
 bool APlayerCharacter::IsPlayerDead() const
 {
 	return IsDead;
+}
+
+void APlayerCharacter::GainGoldClient_Implementation(int NewGold)
+{
+	if (PlayerBattleState == nullptr) return;
+	PlayerBattleState->Gold = NewGold;
+}
+
+void APlayerCharacter::GainGoldServer_Implementation(int GoldGain)
+{
+	PlayerBattleState->Gold += GoldGain;
+	GainGoldClient(PlayerBattleState->Gold);
 }
 
 

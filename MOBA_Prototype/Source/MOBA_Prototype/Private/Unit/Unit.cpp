@@ -50,6 +50,20 @@ bool AUnit::IsUnitDead() const
 	return IsDead;
 }
 
+void AUnit::Heal(int HealAmount)
+{
+	CurrentHealth += HealAmount;
+	int Max = GetMaxHealth();
+	
+	if (CurrentHealth > Max)
+	{
+		CurrentHealth = Max;
+	}
+	UpdateHealthClients(CurrentHealth);
+
+	
+}
+
 int AUnit::GetHealth()
 {
 	return CurrentHealth;
@@ -67,6 +81,12 @@ float AUnit::GetPercentageHealth()
 
 void AUnit::OnHit(FHitData HitData)
 {
+}
+
+void AUnit::UpdateHealthClients_Implementation(int InHealth)
+{
+	CurrentHealth = InHealth;
+	Execute_CallbackUpdateHealth(this);
 }
 
 void AUnit::ChangedTeam_Implementation()

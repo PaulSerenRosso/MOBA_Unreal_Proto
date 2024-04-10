@@ -43,7 +43,7 @@ void UPlayerShootComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 			if(TryShooting)
 			{
 				APlayerBullet* Bullet =	GetWorld()->SpawnActor<APlayerBullet>(PlayerShootInfo->BulletClass,PlayerPawnComponentHandlable->GetPlayerPosition(), PlayerPawnComponentHandlable->GetPlayerRotation());
-				Bullet->SetUp(PlayerShootInfo->BulletDamage, PlayerShootInfo->BulletSpeed, PlayerShootInfo->Range, PlayerPawnComponentHandlable->GetPlayerTeam());
+				Bullet->SetUp(PlayerShootInfo->BulletDamage, PlayerShootInfo->BulletSpeed, PlayerShootInfo->Range, PlayerPawnComponentHandlable->GetPlayerTeam(), GetOwner());
 				FireRate = 0;
 			}
 		}

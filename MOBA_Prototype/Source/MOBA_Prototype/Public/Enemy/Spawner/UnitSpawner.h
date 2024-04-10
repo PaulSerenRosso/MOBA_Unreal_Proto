@@ -49,6 +49,9 @@ protected:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FUnitToSpawn> UnitToSpawn;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float TimeBeforeFirstWave = 7.0f;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UStaticMeshComponent* MeshComponent;

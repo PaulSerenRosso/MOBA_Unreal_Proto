@@ -3,6 +3,8 @@
 
 #include "Enemy/EnemyBase.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/PlayerBullet.h"
+#include "Player/PlayerCharacter.h"
 
 // Sets default values
 AEnemyBase::AEnemyBase()
@@ -78,6 +80,12 @@ void AEnemyBase::OnHit(FHitData HitData)
 	
 	if (CurrentHealth <= 0)
 	{
+		auto player = Cast<APlayerCharacter>(HitData.HitBy);
+		if (player != nullptr) {
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Killed by player ! Gained: %d golds"), EnemyAttackInfo->GoldReward));
+			player->GainGoldServer(EnemyAttackInfo->GoldReward);
+		}
+		
 		DieOnServer();
 	}
 }
@@ -90,12 +98,6 @@ void AEnemyBase::DieOnServer()
 void AEnemyBase::DieOnClients_Implementation()
 {
 	Destroy();
-}
-
-void AEnemyBase::UpdateHealthClients_Implementation(int InHealth)
-{
-	CurrentHealth = InHealth;
-	Execute_CallbackUpdateHealth(this);
 }
 
 void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

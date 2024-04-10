@@ -18,7 +18,7 @@ void AUnitSpawner::BeginPlay()
 	Super::BeginPlay();
 
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Start spawning units")));
-	GetWorld()->GetTimerManager().SetTimer(WaveTimer, this, &AUnitSpawner::SpawnWave, WaveInterval, false);
+	GetWorld()->GetTimerManager().SetTimer(WaveTimer, this, &AUnitSpawner::SpawnWave, TimeBeforeFirstWave, false);
 }
 
 void AUnitSpawner::SpawnWave()

@@ -42,7 +42,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsUnitDead() const;
 
-
+	virtual void Heal(int HealAmount);
 	virtual int GetHealth() override;
 	virtual int GetMaxHealth() override;
 	virtual float GetPercentageHealth() override;
@@ -53,4 +53,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void ChangedTeam();
+	
+	UFUNCTION(NetMulticast,Reliable)
+	virtual void UpdateHealthClients(int InHealth);
 };

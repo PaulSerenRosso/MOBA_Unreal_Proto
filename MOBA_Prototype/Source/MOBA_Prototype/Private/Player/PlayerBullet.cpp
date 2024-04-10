@@ -14,11 +14,12 @@ APlayerBullet::APlayerBullet()
 
 }
 
-void APlayerBullet::SetUp(float InDamage, float InSpeed, float InRange, ETeam InTeam)
+void APlayerBullet::SetUp(float InDamage, float InSpeed, float InRange, ETeam InTeam, AActor* InHitBy)
 {
 	this->Damage = InDamage;
 	this->Speed = InSpeed;
 	this->Team = InTeam;
+	this->HitBy = InHitBy;
 	LifeTime = InRange/InSpeed;
 	GetWorldTimerManager().SetTimer(DestructionTimerHandle,this,  &APlayerBullet::DestroyBullet, LifeTime, false);
 	IsSetup = true;
@@ -42,7 +43,7 @@ void APlayerBullet::NotifyActorBeginOverlap(AActor* OtherActor)
 		{
 			FHitData HitData = FHitData();
 			HitData.Damage = Damage;
-			HitData.HitBy = this;
+			HitData.HitBy = HitBy;
 			Hitable->OnHit(FHitData(HitData));
 			GetWorldTimerManager().ClearTimer(DestructionTimerHandle);
 			DestroyBullet();
