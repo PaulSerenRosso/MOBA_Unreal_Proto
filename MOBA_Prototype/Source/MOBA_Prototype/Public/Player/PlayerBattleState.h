@@ -10,11 +10,14 @@
 /**
  * 
  */
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdatePlayerStat,EPlayerStatType);
 UCLASS()
 class MOBA_PROTOTYPE_API APlayerBattleState : public APlayerState
 {
 	GENERATED_BODY()
 public:
+	FOnUpdatePlayerStat OnUpdatePlayerStatClients;
+	virtual void BeginPlay() override;
 	UPROPERTY(Replicated)
 	ETeam Team;
 
@@ -22,4 +25,10 @@ public:
 	int Gold;
 	
 	void SetTeam();
+	UPROPERTY(EditAnywhere)
+	TMap<EPlayerStatType, float> PlayerStats;
+	UFUNCTION(NetMulticast, Reliable)
+	void IncreaseStatValueClients(EPlayerStatType Type, float Amount);
+	UFUNCTION(BlueprintCallable)
+	float GetStatValue(EPlayerStatType Type);
 };

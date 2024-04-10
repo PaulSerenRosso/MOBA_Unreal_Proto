@@ -43,13 +43,20 @@ void UPlayerShootComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 			if(TryShooting)
 			{
 				APlayerBullet* Bullet =	GetWorld()->SpawnActor<APlayerBullet>(PlayerShootInfo->BulletClass,PlayerPawnComponentHandlable->GetPlayerPosition(), PlayerPawnComponentHandlable->GetPlayerRotation());
-				Bullet->SetUp(PlayerShootInfo->BulletDamage, PlayerShootInfo->BulletSpeed, PlayerShootInfo->Range, PlayerPawnComponentHandlable->GetPlayerTeam(), GetOwner());
+
+				auto Dmg = PlayerShootInfo->BulletDamage*PlayerPawnComponentHandlable->GetPlayerStatValue(EPlayerStatType::Damage);
+				Bullet->SetUp(Dmg, PlayerShootInfo->BulletSpeed, PlayerShootInfo->Range, PlayerPawnComponentHandlable->GetPlayerTeam(), GetOwner());
 				FireRate = 0;
 			}
 		}
 	}
 	
 	// ...
+}
+
+int UPlayerShootComponent::GetDamage()
+{
+	return PlayerShootInfo->BulletDamage;
 }
 
 void UPlayerShootComponent::OnCancelAttackServer_Implementation()

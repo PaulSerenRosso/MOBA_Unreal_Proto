@@ -24,6 +24,8 @@ public:
 	virtual FVector GetPlayerPosition() = 0;
 	virtual FRotator GetPlayerRotation() = 0;
 	virtual ETeam GetPlayerTeam() = 0;
+	virtual float GetPlayerStatValue(EPlayerStatType PlayerStat) =0;
+	
 	
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:

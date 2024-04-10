@@ -6,8 +6,6 @@
 #include "ChampionData.h"
 #include "Enums.h"
 #include "PlayerBattleState.h"
-#include "GameFramework/Character.h"
-#include "Interfaces/Healthable.h"
 #include "Interfaces/Hitable.h"
 #include "Interfaces/PlayerAttackable.h"
 #include "Interfaces/PlayerPawnComponentHandlable.h"
@@ -26,14 +24,16 @@ public:
 	
 	FOnDie OnDieServer;
 	FOnDie OnRespawnServer;
-	
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	TArray<IPlayerAttackable*> PlayerAttackables;
 	UPROPERTY(EditAnywhere)
 	UChampionData* ChampionData;
+	int ShootDamage;
 	APlayerBattleState* PlayerBattleState;
+protected:
+	// Called when the game starts or when spawned
+
+
+	virtual void BeginPlay() override;
+	IPlayerAttackable* PlayerAttackable;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(Replicated)
@@ -50,8 +50,14 @@ protected:
 	virtual void RespawnPlayerClients();
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void SetTeamClients(ETeam InTeam);
-	
-	
+	UFUNCTION(NetMulticast, Reliable)
+	void SetPlayerBattleStateClients(APlayerBattleState* InPlayerBattleState);
+	UFUNCTION(BlueprintCallable)
+	void UpdateMaxSpeed(EPlayerStatType Type);
+	UFUNCTION(BlueprintCallable)
+	void UpdateMaxHealth(EPlayerStatType Type);
+
+
 public:
 	virtual void Move(FVector2D Direction);
 	UPROPERTY(Replicated)
@@ -71,7 +77,7 @@ public:
 	virtual int GetHealth() override;
 	virtual int GetMaxHealth() override;
 	virtual float GetPercentageHealth() override;
-
+	virtual float GetPlayerStatValue(EPlayerStatType PlayerStat) override;
 	UFUNCTION(BlueprintCallable)
 	bool IsPlayerDead() const;
 	
@@ -80,8 +86,5 @@ public:
 	
 	UFUNCTION(NetMulticast, Unreliable)
 	virtual void GainGoldClient(int NewGold);
-	
-
-
 	
 };

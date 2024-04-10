@@ -21,6 +21,12 @@ enum class ECustomUnitType : uint8
 	MeleeBase, RangedBase
 };
 
+UENUM(BlueprintType)
+enum class EPlayerStatType : uint8
+{
+	MaxHealth, Damage, MoveSpeed,
+};
+
 UCLASS()
 class MOBA_PROTOTYPE_API UEnums : public UBlueprintFunctionLibrary
 {

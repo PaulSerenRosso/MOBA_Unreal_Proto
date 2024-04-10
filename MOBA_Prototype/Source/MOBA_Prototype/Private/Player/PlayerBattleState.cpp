@@ -5,7 +5,10 @@
 #include "Net/UnrealNetwork.h"
 
 
-
+void APlayerBattleState::BeginPlay()
+{
+	Super::BeginPlay();
+}
 
 void APlayerBattleState::SetTeam()
 {
@@ -22,6 +25,17 @@ void APlayerBattleState::SetTeam()
 			Team = ETeam::Team2;
 		}
 	}
+}
+
+float APlayerBattleState::GetStatValue(EPlayerStatType Type)
+{
+	return PlayerStats[Type];
+}
+
+void APlayerBattleState::IncreaseStatValueClients_Implementation(EPlayerStatType Type, float Amount)
+{
+	PlayerStats[Type] += Amount;
+	OnUpdatePlayerStatClients.Broadcast(Type);
 }
 
 void APlayerBattleState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const {

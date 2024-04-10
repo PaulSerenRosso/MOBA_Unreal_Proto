@@ -39,4 +39,6 @@ public:
 
 	UFUNCTION(Server, Reliable)
 virtual void OnCancelAttackServer() override;
+
+	virtual int GetDamage() override;
 };
