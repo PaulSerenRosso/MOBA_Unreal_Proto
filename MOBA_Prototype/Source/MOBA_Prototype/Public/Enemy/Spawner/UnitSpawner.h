@@ -33,6 +33,9 @@ protected:
 	FTimerHandle EachUnitTimer;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector UnitScale;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool Enabled = true;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

@@ -2,7 +2,6 @@
 #include "Player/PlayerCharacter.h"
 #include "GameModeBattle.h"
 #include "GameStateBattle.h"
-#include "Helpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerBattleState.h"
@@ -38,7 +37,6 @@ void APlayerCharacter::BeginPlay()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 0, 0.f);
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
-	HealthWidget->UpdateUI(Team);
 	GetCharacterMovement()->MaxWalkSpeed = ChampionData->MaxSpeed;
 	
 }
@@ -92,20 +90,65 @@ void APlayerCharacter::SetTeamClients_Implementation(ETeam InTeam)
 {
 	Team = InTeam;
 	HealthWidget->UpdateUI(Team);
+}
+
+
+void APlayerCharacter::SetPlayerBattleStateOnServer()
+{
+	OnBattlePlayerState();
+	
+	auto GameState = Cast<AGameStateBattle>(GetWorld()->GetGameState());
+	if (GameState == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AGameStateBattle is nullptr"));
+		return;
+	}
+	if (!GameState->PlayerTeamSpawners.Contains(PlayerBattleState->Team))
+	{
+		if(PlayerBattleState->Team == ETeam::Neutral)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Invalid TeamIndex: is neutral "));
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Invalid TeamIndex: "));
+		return;
+	}
+	TeamSpawner = GameState->PlayerTeamSpawners[PlayerBattleState->Team];
+	if (TeamSpawner == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team is nullptr"));
+		return;
+	}
+	
+	SetActorLocation(TeamSpawner->GetActorLocation());
 	
 }
 
-void APlayerCharacter::SetPlayerBattleStateClients_Implementation(APlayerBattleState* InPlayerBattleState)
+void APlayerCharacter::OnRep_PlayerState()
 {
-	if(InPlayerBattleState != nullptr)
-	{
-		PlayerBattleState = InPlayerBattleState;
-		PlayerBattleState->OnUpdatePlayerStatClients.AddUFunction(this, "UpdateMaxSpeed");
-		PlayerBattleState->OnUpdatePlayerStatClients.AddUFunction(this, "UpdateMaxHealth");
-	}
+	Super::OnRep_PlayerState();
+	OnBattlePlayerState();
 }
 
-
+void APlayerCharacter::OnBattlePlayerState()
+{
+	PlayerBattleState = Cast<APlayerBattleState>(GetPlayerState());
+	if (PlayerBattleState == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerBattleState is nullptr"));
+		return;
+	}
+	
+	PlayerBattleState->SetTeam();
+	if (HasAuthority())
+	{
+		Team = PlayerBattleState->Team;
+		SetTeamClients(PlayerBattleState->Team);
+	}
+	
+	PlayerBattleState->OnUpdatePlayerStatClients.AddUFunction(this, "UpdateMaxSpeed");
+	PlayerBattleState->OnUpdatePlayerStatClients.AddUFunction(this, "UpdateMaxHealth");
+	PlayerBattleState->SetGold(0);
+}
 
 void APlayerCharacter::UpdateMaxSpeed(const EPlayerStatType Type, float Amount)
 {
@@ -170,42 +213,7 @@ ETeam APlayerCharacter::GetTeam()
 
 void APlayerCharacter::OnSpawnedServer()
 {
-	PlayerBattleState = Cast<APlayerBattleState>(GetPlayerState());
-	if (PlayerBattleState == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerBattleState is nullptr"));
-		return;
-	}
-	PlayerBattleState->SetTeam();
-	auto GameState = Cast<AGameStateBattle>(GetWorld()->GetGameState());
-	if (GameState == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AGameStateBattle is nullptr"));
-		return;
-	}
-	if (!GameState->PlayerTeamSpawners.Contains(PlayerBattleState->Team))
-	{
-		if(PlayerBattleState->Team == ETeam::Neutral)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Invalid TeamIndex: is neutral "));
-		}
-		UE_LOG(LogTemp, Warning, TEXT("Invalid TeamIndex: "));
-		return;
-	}
-	TeamSpawner = GameState->PlayerTeamSpawners[PlayerBattleState->Team];
-	if (TeamSpawner == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team is nullptr"));
-		return;
-	}
-	UE_LOG(LogTemp, Warning, TEXT("TeamSpawner for Team : %s"), *TeamSpawner->GetName());
-	
-	SetTeamClients(PlayerBattleState->Team);
-	
-	SetActorLocation(TeamSpawner->GetActorLocation());
-	SetPlayerBattleStateClients(PlayerBattleState);
-
-	PlayerBattleState->Gold = 0;
+	SetPlayerBattleStateOnServer();
 }
 
 int APlayerCharacter::GetHealth()
@@ -233,23 +241,20 @@ bool APlayerCharacter::IsPlayerDead() const
 	return IsDead;
 }
 
-void APlayerCharacter::GainGoldClient_Implementation(int NewGold)
+FVector APlayerCharacter::GetPlayerVelocity()
 {
-	if (PlayerBattleState == nullptr) return;
-	PlayerBattleState->Gold = NewGold;
+	return GetCharacterMovement()->Velocity;
 }
 
-void APlayerCharacter::GainGoldServer_Implementation(int GoldGain)
+void APlayerCharacter::GainGold(const float Amount) const
 {
-	PlayerBattleState->Gold += GoldGain;
-	GainGoldClient(PlayerBattleState->Gold);
+	PlayerBattleState->SetGold(PlayerBattleState->Gold + Amount);
+	
 }
 
 void APlayerCharacter::CancelAttackServer_Implementation()
 {
-	
-		PlayerAttackable->OnCancelAttackServer();
-	
+	PlayerAttackable->OnCancelAttackServer();
 }
 
 void APlayerCharacter::AttackServer_Implementation()

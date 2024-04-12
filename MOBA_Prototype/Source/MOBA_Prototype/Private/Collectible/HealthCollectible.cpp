@@ -12,6 +12,8 @@ void AHealthCollectible::Collect(AUnit* Collector)
 	const auto Player = Cast<APlayerCharacter>(Collector);
 
 	if (Player == nullptr && OnlyHealPlayer) return;
+
+	if (Player->GetPercentageHealth() == 1.f) return;
 	
 	OnCollectedClient(Collector);
 }
@@ -19,7 +21,7 @@ void AHealthCollectible::Collect(AUnit* Collector)
 void AHealthCollectible::OnCollectedClient(AUnit* Collector)
 {
 	if (Collector == nullptr) return;
-	Collector->Heal(HealAmount);
+	Collector->Heal(HealAmount, IsPercentage);
 	
 	OnCollected.Broadcast(this, Collector);
 	Destroy();

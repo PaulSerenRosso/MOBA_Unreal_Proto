@@ -5,7 +5,7 @@
 #include "Interfaces/Healthable.h"
 #include "UI/HealthBarWidget.h"
 
-void UHealthWidgetComponent::UpdateUI(ETeam Team)
+void UHealthWidgetComponent::UpdateUI(const ETeam Team)
 {
 	auto Healthable = Cast<IHealthable>(GetOwner());
 	if (Healthable == nullptr) return;

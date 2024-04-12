@@ -82,8 +82,7 @@ void AEnemyBase::OnHit(FHitData HitData)
 	{
 		auto player = Cast<APlayerCharacter>(HitData.HitBy);
 		if (player != nullptr) {
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Killed by player ! Gained: %d golds"), EnemyAttackInfo->GoldReward));
-			player->GainGoldServer(EnemyAttackInfo->GoldReward);
+			player->GainGold(EnemyAttackInfo->GoldReward);
 		}
 		
 		DieOnServer();

@@ -32,27 +32,35 @@ protected:
 	// Called when the game starts or when spawned
 
 	float LocalMaxHealthAmount = 1;
-
-	virtual void BeginPlay() override;
 	IPlayerAttackable* PlayerAttackable;
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+
+	//UPROPERTY(Replicated)
 	UPROPERTY(Replicated)
 	ETeam Team;
+	
 	AActor* TeamSpawner;
 	USkeletalMeshComponent* SkeletalMesh;
 	UHealthWidgetComponent* HealthWidget;
 	FTimerHandle RespawnTimer;
+	
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	virtual void DieServer();
 	virtual void RespawnPlayerServer();
+	
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void DieClients();
+	
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void RespawnPlayerClients();
+	
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void SetTeamClients(ETeam InTeam);
-	UFUNCTION(NetMulticast, Reliable)
-	void SetPlayerBattleStateClients(APlayerBattleState* InPlayerBattleState);
+	
+	void SetPlayerBattleStateOnServer();
+	virtual void OnRep_PlayerState() override;
+	void OnBattlePlayerState();
+	
 	UFUNCTION(BlueprintCallable)
 	void UpdateMaxSpeed(EPlayerStatType Type, float Amount);
 	UFUNCTION(BlueprintCallable)
@@ -83,11 +91,7 @@ public:
 	virtual float GetPlayerStatValue(EPlayerStatType PlayerStat) override;
 	UFUNCTION(BlueprintCallable)
 	bool IsPlayerDead() const;
-	
-	UFUNCTION(Server, Unreliable)
-	virtual void GainGoldServer(int GoldGain);
-	
-	UFUNCTION(NetMulticast, Unreliable)
-	virtual void GainGoldClient(int NewGold);
+	virtual FVector GetPlayerVelocity() override;
+	void GainGold(float Amount) const;
 	
 };

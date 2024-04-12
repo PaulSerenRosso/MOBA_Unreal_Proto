@@ -20,6 +20,9 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool OnlyHealPlayer = true;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool IsPercentage = false;
 
 	virtual void Collect(AUnit* Collector) override;
 	virtual void OnCollectedClient(AUnit* Collector) override;

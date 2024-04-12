@@ -19,6 +19,9 @@ public:
 	void Init(UChampionData* InChampionData, APlayerBattleState* InPlayerBattleState, int InShootDamage);
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUpdatePlayerStatsWidget(EPlayerStatType PlayerStatType);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGoldUpdated();
 protected:
 	UPROPERTY(BlueprintReadWrite)
 	int ShootDamage;

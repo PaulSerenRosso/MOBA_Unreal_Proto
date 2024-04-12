@@ -22,7 +22,7 @@ void ACollectibleSpawner::BeginPlay()
 }
 
 // Called every frame
-void ACollectibleSpawner::Tick(float DeltaTime)
+void ACollectibleSpawner::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -30,7 +30,6 @@ void ACollectibleSpawner::Tick(float DeltaTime)
 
 void ACollectibleSpawner::SpawnCollectible()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SpawnCollectible !"));
 	SpawnCollectibleClients();
 }
 

@@ -16,7 +16,7 @@ class MOBA_PROTOTYPE_API APlayerBullet : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APlayerBullet();
-	virtual void SetUp(float InDamage, float InSpeed, float InRange, ETeam InTeam, AActor* InHitBy);
+	virtual void SetUp(float InDamage, float InSpeed, float InRange, ETeam InTeam, AActor* InHitBy, float DotDirection);
 protected:
 	UBoxComponent* BoxCollision;
 

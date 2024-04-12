@@ -3,7 +3,7 @@
 
 #include "Helpers.h"
 
-void UHelpers::LogScreenMessage(const FString& Text, float Duration )
+void UHelpers::LogScreenMessage(const FString& Text, const float Duration )
 {
 	if (GEngine)
 	{
@@ -16,7 +16,7 @@ void UHelpers::LogScreenMessage(const FString& Text, float Duration )
 	}
 }
 
-ETeam UHelpers::GetEnemyTeam(ETeam Team)
+ETeam UHelpers::GetEnemyTeam(const ETeam Team)
 {
 	switch (Team)
 	{

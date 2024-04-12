@@ -50,10 +50,10 @@ bool AUnit::IsUnitDead() const
 	return IsDead;
 }
 
-void AUnit::Heal(int HealAmount)
+void AUnit::Heal(const float HealAmount, const bool IsPercent)
 {
-	CurrentHealth += HealAmount;
-	int Max = GetMaxHealth();
+	CurrentHealth += IsPercent ? GetMaxHealth() * HealAmount : HealAmount;
+	const int Max = GetMaxHealth();
 	
 	if (CurrentHealth > Max)
 	{

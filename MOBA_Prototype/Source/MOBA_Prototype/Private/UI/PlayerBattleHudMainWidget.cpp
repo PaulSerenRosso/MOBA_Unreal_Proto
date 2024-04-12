@@ -12,4 +12,6 @@ void UPlayerBattleHudMainWidget::Init(UChampionData* InChampionData, APlayerBatt
 	OnUpdatePlayerStatsWidget(EPlayerStatType::Damage);
 	OnUpdatePlayerStatsWidget(EPlayerStatType::MaxHealth);
 	OnUpdatePlayerStatsWidget(EPlayerStatType::MoveSpeed);
+
+	InPlayerBattleState->OnGoldChangedClients.AddUFunction(this, "OnGoldUpdated");
 }

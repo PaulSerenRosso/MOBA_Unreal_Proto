@@ -42,7 +42,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsUnitDead() const;
 
-	virtual void Heal(int HealAmount);
+	virtual void Heal(float HealAmount, bool IsPercent);
 	virtual int GetHealth() override;
 	virtual int GetMaxHealth() override;
 	virtual float GetPercentageHealth() override;

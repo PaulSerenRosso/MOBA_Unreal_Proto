@@ -14,13 +14,13 @@ APlayerBullet::APlayerBullet()
 
 }
 
-void APlayerBullet::SetUp(float InDamage, float InSpeed, float InRange, ETeam InTeam, AActor* InHitBy)
+void APlayerBullet::SetUp(float InDamage, float InSpeed, float InRange, ETeam InTeam, AActor* InHitBy, float DotDirection)
 {
 	this->Damage = InDamage;
 	this->Speed = InSpeed;
 	this->Team = InTeam;
 	this->HitBy = InHitBy;
-	LifeTime = InRange/InSpeed;
+	LifeTime = (InRange+DotDirection)/InSpeed;
 	GetWorldTimerManager().SetTimer(DestructionTimerHandle,this,  &APlayerBullet::DestroyBullet, LifeTime, false);
 	IsSetup = true;
 	BoxCollision = Cast<UBoxComponent>(GetRootComponent());

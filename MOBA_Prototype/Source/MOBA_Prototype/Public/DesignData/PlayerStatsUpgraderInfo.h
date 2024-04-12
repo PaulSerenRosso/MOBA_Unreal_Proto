@@ -21,6 +21,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float UpgradeValue;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int GoldCost;
 };

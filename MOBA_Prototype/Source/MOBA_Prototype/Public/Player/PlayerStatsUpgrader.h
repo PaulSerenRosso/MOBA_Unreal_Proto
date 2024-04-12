@@ -22,7 +22,6 @@ protected:
 	UPlayerStatsUpgraderInfo* PlayerStatsUpgraderInfo;
 	UPROPERTY(EditAnywhere)
 	ETeam Team;
-	
 
 public:	
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;

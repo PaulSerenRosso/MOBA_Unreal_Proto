@@ -94,8 +94,6 @@ void AAutoAimBullet::Init(IHitable* Trget, FHitData* Hit, const float Spd)
 		Destroy();
 		return;
 	}
-
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Bullet Init")));
 	
 	Target = Trget;
 	TargetActor = Cast<AActor>(Target);

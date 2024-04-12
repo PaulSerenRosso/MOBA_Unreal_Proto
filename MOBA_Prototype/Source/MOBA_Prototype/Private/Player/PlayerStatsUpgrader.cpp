@@ -2,8 +2,6 @@
 
 
 #include "Player/PlayerStatsUpgrader.h"
-
-#include "Helpers.h"
 #include "Player/PlayerCharacter.h"
 
 // Sets default values
@@ -19,14 +17,12 @@ void APlayerStatsUpgrader::NotifyActorBeginOverlap(AActor* OtherActor)
 	Super::NotifyActorBeginOverlap(OtherActor);
 	if(!HasAuthority()) return;
 	auto PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
-	UHelpers::LogScreenMessage(TEXT("Overlap"));
 	if(PlayerCharacter == nullptr) return;
 	if(PlayerCharacter->GetTeam() != Team) return;
 
 	if (PlayerCharacter->PlayerBattleState->Gold < PlayerStatsUpgraderInfo->GoldCost) return;
 
-	UHelpers::LogScreenMessage(TEXT("Increase"));
-	PlayerCharacter->PlayerBattleState->Gold -= PlayerStatsUpgraderInfo->GoldCost;
+	PlayerCharacter->PlayerBattleState->ChangeGold(-PlayerStatsUpgraderInfo->GoldCost);
 	PlayerCharacter->PlayerBattleState->IncreaseStatValueClients(PlayerStatsUpgraderInfo->PlayerStatType, PlayerStatsUpgraderInfo->UpgradeValue);
 	
 }
